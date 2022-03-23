@@ -2,6 +2,7 @@ import axios from "axios";
 import { Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main } from "grommet";
 import { Link } from 'grommet-icons';
 import React, { useEffect, useState } from "react";
+import AxiosInstance from '../AxiosInstance';
 
 interface MapObject {
   id: number,
@@ -12,14 +13,14 @@ interface MapObject {
 
 export default function Maps() {
   const [maps, setMaps] = useState<Array<MapObject>>([]);
-
+  console.log(process.env.REACT_APP_API_KEY)
   useEffect(() => {
     getMaps();
   }, []);
 
   function getMaps() {
-    axios
-      .get("http://localhost:8000/api/v1/map/")
+    AxiosInstance
+      .get('/map')
       .then((res) => {
         for (let index in res.data["objects"]) {
           const mapObject = res.data["objects"][index] as MapObject;
