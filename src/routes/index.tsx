@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import App from "../views/Landing";
 import Maps from "../views/Maps";
-import Map from "../views/Map";
+import MapView from "../views/MapView";
 
 export default function AppRoutes() {
   return (
@@ -11,7 +11,7 @@ export default function AppRoutes() {
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="maps" element={<Maps />} />
-        <Route path="maps/:mapId" element={<Map />} />
+        <Route path="maps/:mapId" element={<MapView />} />
         
         <Route path="*"
           element={
