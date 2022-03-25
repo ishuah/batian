@@ -3,19 +3,21 @@ export interface MapObject {
     name: string
     description: string
     resource_uri: string
-    layers: Layer[]
+    layers: LayerObject[]
   }
 
-export interface Layer {
+export interface LayerObject {
     id: number
     name: string
+    data_key: string
     resource_url: string
+    sites: Site[]
 }
 
 export interface Site {
     id: number
     name: string
-    data: string
+    data: Data
     resource_url: string
     shapes: Shape[]
 }
@@ -31,4 +33,8 @@ export interface Shape {
 export interface Point {
     coordinates: [number, number]
     type: "Point"
+}
+
+export interface Data {
+    [key: string]: any
 }
