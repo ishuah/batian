@@ -3,17 +3,11 @@ import { Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main } from 
 import { Link } from 'grommet-icons';
 import React, { useEffect, useState } from "react";
 import AxiosInstance from '../AxiosInstance';
-
-interface MapObject {
-  id: number,
-  name: string,
-  description: string
-  resource_uri: string
-}
+import { MapObject } from "./Map.types";
 
 export default function Maps() {
   const [maps, setMaps] = useState<Array<MapObject>>([]);
-  console.log(process.env.REACT_APP_API_KEY)
+
   useEffect(() => {
     getMaps();
   }, []);

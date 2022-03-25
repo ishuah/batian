@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import AppRoutes from './routes';
-console.log(process.env.REACT_APP_API_KEY);
+
 ReactDOM.render(
   <AppRoutes />,
   document.getElementById('root')
