@@ -1,4 +1,4 @@
-import { Grommet, Main, Box, Card, CardBody, Heading, CardHeader, Text, CardFooter } from "grommet";
+import { Box, CardBody, Grommet, Main } from "grommet";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
@@ -23,18 +23,18 @@ export default function MapView() {
   function handleResize() {
     setWindowDimensions(getWindowDimensions());
   }
-  
+
   useEffect(() => {
     if (map) {
       map.layers.map((layer) => {
-        getSites(layer.id);
+        getSites(layer.id, 1000, 1);
       });
     }
   }, [map]);
 
   useEffect(() => {
     getMap();
-    console.log("once");
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -49,11 +49,16 @@ export default function MapView() {
       .catch((err) => console.log(err));
   }
 
-  function getSites(layerId: number) {
-    AxiosInstance
-    .get(`/site/?limit=100&layer=${layerId}`)
+  function getSites(layerId: number, limit: number, page: number): Promise<any> {
+    const offset = (page - 1) * limit;
+    return AxiosInstance
+    .get(`/site/?limit=${limit}&offset=${offset}&layer=${layerId}`)
     .then((res) => {
       setSites(sites => [...sites, ...res.data["objects"]]);
+      if (res.data["meta"]["next"]) {
+        return getSites(layerId, limit, page+1);
+      }
+      return;
     })
     .catch((err) => console.log(err));
   }
@@ -71,10 +76,10 @@ export default function MapView() {
                   stroke="#D6D6DA" />)
                   }
                 </Geographies>
-                {sites.map(({ name, shapes }) => {
+                {sites.map(({ id, name, shapes }) => {
                   const point = shapes[0].shape as Point;
                   return (
-                  <Marker key={name} coordinates={point.coordinates}>
+                  <Marker key={id} coordinates={point.coordinates}>
                   <circle r={10} fill="#F00" stroke="#fff" strokeWidth={2} />
                       {name}
                   </Marker>
@@ -86,5 +91,5 @@ export default function MapView() {
       </Main>
     </Grommet>
   );
-  
+
 }
