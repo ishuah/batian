@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import AppRoutes from './routes';
+import AppRoutes from './AppRoutes';
 
 ReactDOM.render(
   <AppRoutes />,
