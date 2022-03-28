@@ -1,10 +1,10 @@
 import { scaleLinear } from "d3-scale";
-import { Avatar, Box, Button, Card, CardBody, Text, CardHeader, Grommet, Layer, Main, Nav, Sidebar, Spinner, Heading } from "grommet";
-import { Clock, Favorite, Help, Projects, ShareOption } from "grommet-icons/icons";
+import { Box, Card, CardBody, CardHeader, Grommet, Heading, Layer, Main, Spinner, Text } from "grommet";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
 import AxiosInstance from "../../AxiosInstance";
+import NotFound from "../NotFound";
 import { LayerObject, MapObject, Point } from "./Map.types";
 
 
@@ -12,7 +12,7 @@ export default function MapView() {
   let params = useParams();
   const [map, setMap] = useState<MapObject>();
   const [layers, setLayers] = useState<Array<LayerObject>>([]);
-  //const [sites, setSites] = useState<Array<Site>>([]);
+  const [requestError, setRequestError] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
@@ -51,7 +51,7 @@ export default function MapView() {
         setMap(res.data);
       })
       .catch((error) => {
-        console.log(error.response);
+        setRequestError(error.response);
         setIsLoading(false);
       });
   }
@@ -70,8 +70,8 @@ export default function MapView() {
       return;
     })
     .finally(() => setIsLoading(false))
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      setRequestError(error.response);
       setIsLoading(false);
     });
   }
@@ -104,33 +104,36 @@ export default function MapView() {
   return (
     <Grommet>
       <Main>
-        <Box height={{ max: `${windowDimensions.height}px`}}>
-        { !isLoading &&
-        (<Card style={{position: "absolute", top: `${windowDimensions.height * 0.25}px`, left: `${windowDimensions.width * 0.05}px`}}
-        height="small" width="medium" background="light-1" round="xsmall">
-          <CardHeader pad={{ vertical:"small", horizontal:"medium"}}>
-            <Heading level="3" margin="xxsmall">{map && map.name}</Heading></CardHeader>
-          <CardBody pad={{ vertical:"small", horizontal:"medium"}}><Text>{map && map.description}</Text></CardBody>
-        </Card>)}
-          { isLoading ?
-              (
-                <Layer>
-                  <Spinner color="status-ok" size="large" />
-                </Layer>
-              ) :
-            <ComposableMap projection="geoMercator">
-              <ZoomableGroup zoom={1}>
-                <Spinner />
-                <Geographies geography={geoUrl}>
-                  {({ geographies }) =>
-                  geographies.map(geo => <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC"
-                  stroke="#D6D6DA" />)
-                  }
-                </Geographies>
-                {renderLayers()}
-              </ZoomableGroup>
-          </ComposableMap>}
-        </Box>
+        {requestError ? (<NotFound message={requestError.statusText} />) :
+        (
+          <Box height={{ max: `${windowDimensions.height}px`}}>
+          { !isLoading && map &&
+          (<Card style={{position: "absolute", top: `${windowDimensions.height * 0.25}px`, left: `${windowDimensions.width * 0.05}px`}}
+          height="small" width="medium" background="light-1" round="xsmall">
+            <CardHeader pad={{ vertical:"small", horizontal:"medium"}}>
+              <Heading level="3" margin="xxsmall">{map && map.name}</Heading></CardHeader>
+            <CardBody pad={{ vertical:"small", horizontal:"medium"}}><Text>{map && map.description}</Text></CardBody>
+          </Card>)}
+            { isLoading ?
+                (
+                  <Layer>
+                    <Spinner color="status-ok" size="large" />
+                  </Layer>
+                ) :
+              <ComposableMap projection="geoMercator">
+                <ZoomableGroup zoom={1}>
+                  <Spinner />
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                    geographies.map(geo => <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC"
+                    stroke="#D6D6DA" />)
+                    }
+                  </Geographies>
+                  {renderLayers()}
+                </ZoomableGroup>
+            </ComposableMap>}
+          </Box>
+        )}
       </Main>
     </Grommet>
   );
