@@ -1,7 +1,7 @@
 import { Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main } from "grommet";
 import { Link } from 'grommet-icons';
 import React, { useEffect, useState } from "react";
-import AxiosInstance from '../AxiosInstance';
+import AxiosInstance from '../../AxiosInstance';
 import { MapObject } from "./Map.types";
 
 export default function Maps() {

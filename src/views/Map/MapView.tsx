@@ -4,7 +4,7 @@ import { Clock, Favorite, Help, Projects, ShareOption } from "grommet-icons/icon
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
-import AxiosInstance from "../AxiosInstance";
+import AxiosInstance from "../../AxiosInstance";
 import { LayerObject, MapObject, Point } from "./Map.types";
 
 
