@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./views/Landing";
 import MapListView from "./views/Map/MapListView";
 import MapView from "./views/Map/MapView";
+import NotFound from "./views/NotFound";
 
 export default function AppRoutes() {
   return (
@@ -14,14 +15,7 @@ export default function AppRoutes() {
         <Route path="maps" element={<MapListView />} />
         <Route path="maps/:mapId" element={<MapView />} />
         
-        <Route path="*"
-          element={
-            <Grommet>
-              <Main pad="large">
-                <p>Oops! Dead end.</p>
-              </Main>
-            </Grommet>
-          }
+        <Route path="*" element={<NotFound message="Oops! Dead end." />}
         />
       </Routes>
     </BrowserRouter>

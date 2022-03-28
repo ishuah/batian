@@ -32,7 +32,7 @@ export default function MapView() {
     if (map) {
       map.layers.map((layer) => {
         layer.sites = [];
-        getSites(layer, 1000, 1);
+        getSites(layer, 1000, 8);
       });
     }
   }, [map]);
@@ -50,7 +50,10 @@ export default function MapView() {
       .then((res) => {
         setMap(res.data);
       })
-      .catch((err) => console.log(err));
+      .catch((error) => {
+        console.log(error.response);
+        setIsLoading(false);
+      });
   }
 
   function getSites(layer: LayerObject, limit: number, page: number): Promise<any> {
@@ -67,7 +70,10 @@ export default function MapView() {
       return;
     })
     .finally(() => setIsLoading(false))
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      console.log(err);
+      setIsLoading(false);
+    });
   }
 
   function renderLayers() {
@@ -106,24 +112,24 @@ export default function MapView() {
             <Heading level="3" margin="xxsmall">{map && map.name}</Heading></CardHeader>
           <CardBody pad={{ vertical:"small", horizontal:"medium"}}><Text>{map && map.description}</Text></CardBody>
         </Card>)}
-          <ComposableMap projection="geoMercator">
-            <ZoomableGroup zoom={1}>
-              <Spinner />
-              <Geographies geography={geoUrl}>
-                {({ geographies }) =>
-                geographies.map(geo => <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC"
-                stroke="#D6D6DA" />)
-                }
-              </Geographies>
-              {isLoading ? (
+          { isLoading ?
+              (
                 <Layer>
                   <Spinner color="status-ok" size="large" />
                 </Layer>
               ) :
-                renderLayers()
-              }
-            </ZoomableGroup>
-        </ComposableMap>
+            <ComposableMap projection="geoMercator">
+              <ZoomableGroup zoom={1}>
+                <Spinner />
+                <Geographies geography={geoUrl}>
+                  {({ geographies }) =>
+                  geographies.map(geo => <Geography key={geo.rsmKey} geography={geo} fill="#EAEAEC"
+                  stroke="#D6D6DA" />)
+                  }
+                </Geographies>
+                {renderLayers()}
+              </ZoomableGroup>
+          </ComposableMap>}
         </Box>
       </Main>
     </Grommet>
