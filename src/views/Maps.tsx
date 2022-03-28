@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main } from "grommet";
 import { Link } from 'grommet-icons';
 import React, { useEffect, useState } from "react";

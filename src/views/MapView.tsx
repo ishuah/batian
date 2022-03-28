@@ -1,10 +1,11 @@
-import { Box, Grommet, Layer, Main, Spinner } from "grommet";
+import { scaleLinear } from "d3-scale";
+import { Avatar, Box, Button, Card, CardBody, Text, CardHeader, Grommet, Layer, Main, Nav, Sidebar, Spinner, Heading } from "grommet";
+import { Clock, Favorite, Help, Projects, ShareOption } from "grommet-icons/icons";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
 import AxiosInstance from "../AxiosInstance";
-import { LayerObject, MapObject, Point, Site } from "./Map.types";
-import { scaleLinear } from "d3-scale";
+import { LayerObject, MapObject, Point } from "./Map.types";
 
 
 export default function MapView() {
@@ -31,7 +32,7 @@ export default function MapView() {
     if (map) {
       map.layers.map((layer) => {
         layer.sites = [];
-        getSites(layer, 1000, 8);
+        getSites(layer, 1000, 1);
       });
     }
   }, [map]);
@@ -58,8 +59,7 @@ export default function MapView() {
     .get(`/site/?limit=${limit}&offset=${offset}&layer=${layer.id}`)
     .then((res) => {
       layer.sites = [...layer.sites, ...res.data["objects"]];
-      
-      //setSites(sites => [...sites, ...res.data["objects"]]);
+
       if (res.data["meta"]["next"]) {
         return getSites(layer, limit, page+1);
       }
@@ -99,6 +99,13 @@ export default function MapView() {
     <Grommet>
       <Main>
         <Box height={{ max: `${windowDimensions.height}px`}}>
+        { !isLoading &&
+        (<Card style={{position: "absolute", top: `${windowDimensions.height * 0.25}px`, left: `${windowDimensions.width * 0.05}px`}}
+        height="small" width="medium" background="light-1" round="xsmall">
+          <CardHeader pad={{ vertical:"small", horizontal:"medium"}}>
+            <Heading level="3" margin="xxsmall">{map && map.name}</Heading></CardHeader>
+          <CardBody pad={{ vertical:"small", horizontal:"medium"}}><Text>{map && map.description}</Text></CardBody>
+        </Card>)}
           <ComposableMap projection="geoMercator">
             <ZoomableGroup zoom={1}>
               <Spinner />
