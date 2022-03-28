@@ -1,8 +1,9 @@
+import { Grommet, Main } from "grommet";
 import React from "react";
 import { Routes, Route } from "react-router";
 import { BrowserRouter } from "react-router-dom";
 import App from "../views/Landing";
-import Maps from "../views/Maps";
+import MapListView from "../views/MapListView";
 import MapView from "../views/MapView";
 
 export default function AppRoutes() {
@@ -10,14 +11,16 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="maps" element={<Maps />} />
+        <Route path="maps" element={<MapListView />} />
         <Route path="maps/:mapId" element={<MapView />} />
         
         <Route path="*"
           element={
-            <main style={{ padding: "1rem" }}>
-              <p>Oops! Dead end.</p>
-            </main>
+            <Grommet>
+              <Main pad="large">
+                <p>Oops! Dead end.</p>
+              </Main>
+            </Grommet>
           }
         />
       </Routes>
