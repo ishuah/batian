@@ -3,7 +3,7 @@ import { Box, Card, CardBody, CardHeader, Grommet, Heading, Layer, Main, Spinner
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from "react-simple-maps";
-import AxiosInstance from "../../AxiosInstance";
+import AxiosInstance, { getMap, getSites } from "../../API";
 import NotFound from "../NotFound";
 import { LayerObject, MapObject, Point } from "./Map.types";
 
@@ -32,49 +32,30 @@ export default function MapView() {
     if (map) {
       map.layers.map((layer) => {
         layer.sites = [];
-        getSites(layer, 1000, 8);
+        getSites(layer, 1000, 7).then((response) => {
+          console.log(response);
+          setLayers(layers => [...layers, response]);
+        })
+        .finally(() => setIsLoading(false))
+        .catch((error) => {
+          setRequestError(error.response);
+          setIsLoading(false);
+        });
       });
     }
   }, [map]);
 
   useEffect(() => {
-    getMap();
+    params.mapId && getMap(params.mapId).then((response) => {
+      setMap(response);
+    }).catch((error) => {
+      setRequestError(error.response);
+      setIsLoading(false);
+    });
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  function getMap() {
-    AxiosInstance
-      .get(`/map/${params.mapId}`)
-      .then((res) => {
-        setMap(res.data);
-      })
-      .catch((error) => {
-        setRequestError(error.response);
-        setIsLoading(false);
-      });
-  }
-
-  function getSites(layer: LayerObject, limit: number, page: number): Promise<any> {
-    const offset = (page - 1) * limit;
-    return AxiosInstance
-    .get(`/site/?limit=${limit}&offset=${offset}&layer=${layer.id}`)
-    .then((res) => {
-      layer.sites = [...layer.sites, ...res.data["objects"]];
-
-      if (res.data["meta"]["next"]) {
-        return getSites(layer, limit, page+1);
-      }
-      setLayers(layers => [...layers, layer]);
-      return;
-    })
-    .finally(() => setIsLoading(false))
-    .catch((error) => {
-      setRequestError(error.response);
-      setIsLoading(false);
-    });
-  }
 
   function renderLayers() {
     return layers.map((layer) => {
