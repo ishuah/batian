@@ -10,7 +10,7 @@ export default function Maps() {
   useEffect(() => {
     getMaps().then((response) => {
       setMaps(response);
-    }).catch((error) => console.log(error));
+    }).catch((error) => console.log(JSON.stringify(error)));
   }, []);
 
   return (

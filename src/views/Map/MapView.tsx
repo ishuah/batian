@@ -33,7 +33,6 @@ export default function MapView() {
       map.layers.map((layer) => {
         layer.sites = [];
         getSites(layer, 1000, 7).then((response) => {
-          console.log(response);
           setLayers(layers => [...layers, response]);
         })
         .finally(() => setIsLoading(false))
