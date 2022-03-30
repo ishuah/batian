@@ -1,17 +1,13 @@
-export interface MapObject {
+export interface Shape {
     id: number
-    name: string
-    description: string
-    resource_uri: string
-    layers: LayerObject[]
-  }
-
-export interface LayerObject {
-    id: number
-    name: string
-    data_key: string
+    content_object: string
+    object_id: number
     resource_url: string
-    sites: Site[]
+    shape: any
+}
+
+export interface Data {
+    [key: string]: any
 }
 
 export interface Site {
@@ -22,19 +18,23 @@ export interface Site {
     shapes: Shape[]
 }
 
-export interface Shape {
+export interface LayerObject {
     id: number
-    content_object: string
-    object_id: number
+    name: string
+    data_key: string
     resource_url: string
-    shape: Object 
+    sites: Site[]
 }
+
+export interface MapObject {
+    id: number
+    name: string
+    description: string
+    resource_uri: string
+    layers: LayerObject[]
+  }
 
 export interface Point {
     coordinates: [number, number]
-    type: "Point"
-}
-
-export interface Data {
-    [key: string]: any
+    type: 'Point'
 }
