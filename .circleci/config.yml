@@ -28,8 +28,7 @@ jobs:
       - run:
           name: Run tests
           command: npm test
-      - codecov/upload:
-          file: './coverage/clover.xml'
+      - codecov/upload
       - run:
           name: Run static analysis
           command: npm run lint
