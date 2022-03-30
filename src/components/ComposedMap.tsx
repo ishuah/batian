@@ -6,7 +6,7 @@ import {
 } from 'react-simple-maps';
 import { LayerObject, Point } from '../views/Map/Map.types';
 
-interface ComposedMapProps {
+type ComposedMapProps = {
   isLoading: boolean
   layers: LayerObject[]
 }

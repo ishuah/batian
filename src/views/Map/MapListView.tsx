@@ -11,7 +11,7 @@ export default function MapListView() {
   useEffect(() => {
     getMaps().then((response) => {
       setMaps(response);
-    }).catch((error) => console.log(JSON.stringify(error)));
+    });
   }, []);
 
   return (
