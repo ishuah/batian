@@ -27,7 +27,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm test
+          command: npm test -- --coverage
       - codecov/upload
       - run:
           name: Run static analysis
