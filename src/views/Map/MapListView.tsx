@@ -1,10 +1,11 @@
-import { Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main } from "grommet";
-import { Link } from 'grommet-icons';
-import React, { useEffect, useState } from "react";
+import {
+  Anchor, Box, Card, CardBody, CardHeader, Grommet, Heading, Main,
+} from 'grommet';
+import React, { useEffect, useState } from 'react';
 import { getMaps } from '../../API';
-import { MapObject } from "./Map.types";
+import { MapObject } from './Map.types';
 
-export default function Maps() {
+export default function MapListView() {
   const [maps, setMaps] = useState<Array<MapObject>>([]);
 
   useEffect(() => {
@@ -19,16 +20,14 @@ export default function Maps() {
         <Box align="center">
           <Heading>Demo Maps</Heading>
           {maps.map((m) => (
-            <Card  height="small" width="small" background="light-1">
+            <Card height="small" width="small" background="light-1">
               <CardHeader pad="small">{m.name}</CardHeader>
               <CardBody pad="small">{m.description}</CardBody>
-              <Link color='status-ok' />
-              <Anchor key={m.id} href={`/maps/${m.id}`} label="See the map" color='status-ok'/>
+              <Anchor key={m.id} href={`/maps/${m.id}`} label="See the map" color="status-ok" />
             </Card>
           ))}
         </Box>
       </Main>
     </Grommet>
-  )
-
+  );
 }
