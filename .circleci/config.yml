@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@4.7
+  codecov: codecov/codecov@3.2.2
 jobs:
   build:
     docker:
@@ -27,6 +28,8 @@ jobs:
       - run:
           name: Run tests
           command: npm test
+      - codecov/upload:
+          file: './coverage/clover.xml'
       - run:
           name: Run static analysis
           command: npm run lint
