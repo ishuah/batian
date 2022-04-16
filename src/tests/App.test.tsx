@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import Landing from '../views/Landing';
+import App from '../views/App';
 
-describe('<Landing />', () => {
+describe('<App />', () => {
   test('renders header', () => {
-    render(<Landing />);
+    render(<App />);
     const linkElement = screen.getByText(/batian/i);
     expect(linkElement).toBeInTheDocument();
   });
