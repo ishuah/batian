@@ -2,13 +2,10 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
 import {
-  Grommet, Header, Heading, Main, Box, Text, WorldMap, Grid, Button,
+  Grommet, Header, Heading, Main, Box, WorldMap, Grid, Button, Select,
+  RadioButtonGroup,
 } from 'grommet';
 import StepLabel from '../components/StepLabel/StepLabel';
-
-interface Workflow {
-  steps: []
-}
 
 const CustomTheme = {
   global: {
@@ -19,19 +16,26 @@ const CustomTheme = {
 };
 
 function App() {
-  const steps = ['Select map type', 'Load your data', 'Refine', 'Visualize'];
+  const [mapType, setMapType] = useState('');
+  const [mapRegion, setMapRegion] = useState('World');
+  const [toggleContinue, setToggleContinue] = useState(true);
+  const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
 
   function advanceToNext() {
     setCurrentStep(currentStep + 1);
+    setToggleContinue(true);
   }
 
   function revertToLast() {
     setCurrentStep(currentStep - 1);
+    setToggleContinue(false);
   }
 
   function reset() {
     setCurrentStep(0);
+    setToggleContinue(true);
+    setMapType('');
   }
 
   return (
@@ -66,14 +70,39 @@ function App() {
                 }
               </Box>
               <Box pad="medium">
-                <Box height="large">
-                  <Text>Step details</Text>
-                </Box>
+                { currentStep === 0
+                && (
+                  <Box height="large">
+                    <Box pad="medium">
+                      <Heading level="4">What type of map do you want to create?</Heading>
+                      <RadioButtonGroup
+                        name="mapType"
+                        options={['Choropleth', 'Symbol']}
+                        value={mapType}
+                        onChange={(event) => {
+                          setToggleContinue(false);
+                          setMapType(event.target.value);
+                        }}
+                      />
+                    </Box>
+                    { mapType && (
+                      <Box>
+                        <Heading level="4">Select map</Heading>
+                        <Select
+                          options={['World', 'Africa', 'Kenya']}
+                          value={mapRegion}
+                          onChange={({ option }) => setMapRegion(option)}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                )}
+
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" />
                   <Box direction="row">
                     <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
-                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" />
+                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue} />
                   </Box>
                 </Box>
               </Box>
