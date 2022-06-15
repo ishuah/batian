@@ -14,7 +14,7 @@ function RenderMap(props: RenderMapProps) {
 
   const aProjection = d3
     .geoMercator()
-    .scale(350)
+    .scale(40)
     .translate([300, 300]);
   const geoPath = d3.geoPath().projection(aProjection);
 

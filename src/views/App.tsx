@@ -22,15 +22,16 @@ type MapRegions = {
 
 function App() {
   const [mapType, setMapType] = useState('');
-  const [mapRegion, setMapRegion] = useState('World');
+  const [mapRegion, setMapRegion] = useState('Africa');
   const [toggleContinue, setToggleContinue] = useState(true);
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
 
   const mapRegions: MapRegions = {
-    World: 'https://raw.githubusercontent.com/lvictory/maps-data/master/world.geo.json',
+    Australia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/australia.geojson',
     Africa: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/africa.geojson',
-    Kenya: 'https://africaopendata.org/dataset/a8f8b195-aafd-449b-9b1a-ab337fd9925f/resource/4fb2e27e-c001-4b7f-b71d-4fee4a96a0f8/download/kenyan-counties.geojson',
+    Europe: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/europe.geojson',
+    'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
   };
 
   function advanceToNext() {
