@@ -2,7 +2,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
 import {
-  Grommet, Header, Heading, Main, Box, WorldMap, Grid, Button, Select,
+  Grommet, Header, Heading, Main, Box, Grid, Button, Select,
   RadioButtonGroup,
 } from 'grommet';
 import StepLabel from '../components/StepLabel/StepLabel';
@@ -15,12 +15,22 @@ const CustomTheme = {
   },
 };
 
+type MapRegions = {
+  [key: string]: string
+}
+
 function App() {
   const [mapType, setMapType] = useState('');
   const [mapRegion, setMapRegion] = useState('World');
   const [toggleContinue, setToggleContinue] = useState(true);
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
+
+  const mapRegions: MapRegions = {
+    World: 'https://raw.githubusercontent.com/lvictory/maps-data/master/world.geo.json',
+    Africa: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/africa.geojson',
+    Kenya: 'https://africaopendata.org/dataset/a8f8b195-aafd-449b-9b1a-ab337fd9925f/resource/4fb2e27e-c001-4b7f-b71d-4fee4a96a0f8/download/kenyan-counties.geojson',
+  };
 
   function advanceToNext() {
     setCurrentStep(currentStep + 1);
@@ -89,7 +99,7 @@ function App() {
                       <Box>
                         <Heading level="4">Select map</Heading>
                         <Select
-                          options={['World', 'Africa', 'Kenya']}
+                          options={Object.keys(mapRegions)}
                           value={mapRegion}
                           onChange={({ option }) => setMapRegion(option)}
                         />
@@ -108,7 +118,7 @@ function App() {
               </Box>
             </Box>
             <Box gridArea="main" pad="large">
-              <WorldMap color="brand" />
+              <svg id="RenderMap" width="606" height="400" />
             </Box>
           </Grid>
         </Box>
