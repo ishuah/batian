@@ -13,7 +13,7 @@ function StepLabel(props: StepLabelProps) {
   const {
     text, step, completed, active,
   } = props;
-  const color = active || completed ? '#7D4CDB' : '#9e9e9e';
+  const color = active || completed ? '#3d9fa0' : '#9e9e9e';
   return (
     <Box style={{
       paddingRight: 8, paddingLeft: 8, flex: 1, position: 'relative',

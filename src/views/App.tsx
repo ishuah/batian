@@ -10,6 +10,14 @@ interface Workflow {
   steps: []
 }
 
+const CustomTheme = {
+  global: {
+    colors: {
+      brand: '#3d9fa0',
+    },
+  },
+};
+
 function App() {
   const steps = ['Select map type', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
@@ -27,10 +35,10 @@ function App() {
   }
 
   return (
-    <Grommet>
+    <Grommet theme={CustomTheme}>
       <Main fill="vertical" pad="none">
         <Header background="white" pad="xxsmall">
-          <Heading level="3" margin={{ vertical: 'small', horizontal: 'small' }}>Batian</Heading>
+          <Heading level="4" margin={{ vertical: 'small', horizontal: 'small' }}>Batian</Heading>
         </Header>
         <Box pad="large" align="center">
           <Grid
