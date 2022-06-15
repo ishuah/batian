@@ -6,6 +6,7 @@ import {
   RadioButtonGroup,
 } from 'grommet';
 import StepLabel from '../components/StepLabel/StepLabel';
+import RenderMap from '../components/RenderMap';
 
 const CustomTheme = {
   global: {
@@ -117,8 +118,8 @@ function App() {
                 </Box>
               </Box>
             </Box>
-            <Box gridArea="main" pad="large">
-              <svg id="RenderMap" width="606" height="400" />
+            <Box gridArea="main">
+              <RenderMap url={mapRegions[mapRegion]} />
             </Box>
           </Grid>
         </Box>
