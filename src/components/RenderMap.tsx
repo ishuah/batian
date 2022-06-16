@@ -12,11 +12,11 @@ function RenderMap(props: RenderMapProps) {
     .attr('height', 600)
     .attr('style', 'background-color: white');
 
-  const aProjection = d3
+  const projection = d3
     .geoMercator()
-    .scale(40)
-    .translate([300, 300]);
-  const geoPath = d3.geoPath().projection(aProjection);
+    .scale(1)
+    .translate([0, 0]);
+  const path = d3.geoPath().projection(projection);
 
   useEffect(() => {
     const { url } = props;
@@ -24,6 +24,13 @@ function RenderMap(props: RenderMapProps) {
 
     d3.json(url)
       .then((data: any) => {
+        const b = path.bounds(data);
+        const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / 720, (b[1][1] - b[0][1]) / 600);
+        const translate: [number, number] = [(720 - scale * (b[1][0] + b[0][0])) / 2,
+          (600 - scale * (b[1][1] + b[0][1])) / 2];
+        projection
+          .scale(scale)
+          .translate(translate);
         svg
           .selectAll('path')
           .data(data.features)
@@ -32,7 +39,7 @@ function RenderMap(props: RenderMapProps) {
           .attr('class', 'country')
           .attr('fill', '#c9d1da')
           .attr('stroke', 'white')
-          .attr('d', geoPath as any);
+          .attr('d', path as any);
       });
   }, [props]);
   return (
