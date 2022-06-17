@@ -67,6 +67,14 @@ function App() {
     });
   }
 
+  function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const fileList = event.target.files;
+    if (fileList && fileList.length === 1) {
+      const file = fileList[0];
+      parseCSV(file);
+    }
+  }
+
   function renderDataTable() {
     const columns = Object.keys(userData.data[0]).map((header) => ({ property: header, header }));
 
@@ -126,13 +134,7 @@ function App() {
             name="file"
             accept=".csv"
             multiple={false}
-            onChange={(event) => {
-              const fileList = event.target.files;
-              if (fileList && fileList.length === 1) {
-                const file = fileList[0];
-                parseCSV(file);
-              }
-            }}
+            onChange={onFileUpload}
           />
           { userData.ready && renderDataTable() }
         </Box>
@@ -155,13 +157,7 @@ function App() {
             name="file"
             accept=".csv"
             multiple={false}
-            onChange={(event) => {
-              const fileList = event.target.files;
-              if (fileList && fileList.length === 1) {
-                const file = fileList[0];
-                parseCSV(file);
-              }
-            }}
+            onChange={onFileUpload}
           />
           { userData.ready && renderDataTable() }
         </Box>
