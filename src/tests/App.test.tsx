@@ -29,5 +29,11 @@ describe('<App />', () => {
     const title = screen.getByText(/Time to add some data/i);
     expect(title).toBeInTheDocument();
     expect(screen.getByText(/Continue/i)).toBeDisabled();
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeEnabled();
+    fireEvent.click(backButton);
+
+    expect(screen.getByText(/What type of map do you want to create?/i)).toBeInTheDocument();
   });
 });
