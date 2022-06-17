@@ -62,7 +62,6 @@ function App() {
     Papa.parse(file, {
       header: true,
       complete(results) {
-        console.log('Finished:', results.data);
         setUserData({ data: results.data as [], ready: true });
       },
     });
@@ -70,9 +69,10 @@ function App() {
 
   function renderDataTable() {
     const columns = Object.keys(userData.data[0]).map((header) => ({ property: header, header }));
-    console.log(columns);
+
     return (
       <DataTable
+        data-testid="file-input"
         size="small"
         margin="small"
         columns={columns}
@@ -122,6 +122,7 @@ function App() {
             NAME, VALUE
           </Paragraph>
           <FileInput
+            data-testid="file-input"
             name="file"
             accept=".csv"
             multiple={false}
@@ -210,7 +211,7 @@ function App() {
                 { currentStep === 1 && renderDataStep() }
 
                 <Box direction="row" justify="between">
-                  <Button onClick={revertToLast} alignSelf="start" label="Back" />
+                  <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={currentStep === 0} />
                   <Box direction="row">
                     <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
                     <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue} />
