@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, fireEvent, screen, act, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, fireEvent, screen } from '@testing-library/react';
 import App from '../views/App';
 
 describe('<App />', () => {

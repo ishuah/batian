@@ -72,7 +72,7 @@ function App() {
 
     return (
       <DataTable
-        data-testid="file-input"
+        data-testid="data-table"
         size="small"
         margin="small"
         columns={columns}
