@@ -9,7 +9,7 @@ import {
   FileInput,
   DataTable,
 } from 'grommet';
-import StepLabel from '../components/StepLabel/StepLabel';
+import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
 
 const CustomTheme = {
