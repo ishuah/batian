@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import StepLabel from '../../components/StepLabel';
 
 describe('<StepLabel />', () => {
-  test('render normal step', () => {
+  test('renders normal step', () => {
     const { container } = render(<StepLabel text="Get it started" step={23} completed={false} />);
 
     const labelText = screen.getByText(/Get it started/i);
