@@ -28,11 +28,35 @@ describe('<App />', () => {
 
     const title = screen.getByText(/Time to add some data/i);
     expect(title).toBeInTheDocument();
-    expect(screen.getByText(/Continue/i)).toBeDisabled();
+    const continueButton = screen.getByText(/Continue/i);
+    expect(continueButton).toBeDisabled();
+
+    const backButton = screen.getByText(/Back/i);
+    expect(backButton).toBeEnabled();
+  });
+
+  test('back button', async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByText('Choropleth'));
+    fireEvent.click(screen.getByText(/Continue/i));
 
     const backButton = screen.getByText(/Back/i);
     expect(backButton).toBeEnabled();
     fireEvent.click(backButton);
+
+    expect(screen.getByText(/What type of map do you want to create?/i)).toBeInTheDocument();
+  });
+
+  test('cancel button', async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByText('Choropleth'));
+    fireEvent.click(screen.getByText(/Continue/i));
+
+    const cancelButton = screen.getByText(/Cancel/i);
+    expect(cancelButton).toBeEnabled();
+    fireEvent.click(cancelButton);
 
     expect(screen.getByText(/What type of map do you want to create?/i)).toBeInTheDocument();
   });
