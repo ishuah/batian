@@ -35,7 +35,7 @@ describe('<App />', () => {
     expect(backButton).toBeEnabled();
   });
 
-  test('back button', async () => {
+  test('back button', () => {
     render(<App />);
 
     fireEvent.click(screen.getByText('Choropleth'));
@@ -48,7 +48,7 @@ describe('<App />', () => {
     expect(screen.getByText(/What type of map do you want to create?/i)).toBeInTheDocument();
   });
 
-  test('cancel button', async () => {
+  test('cancel button', () => {
     render(<App />);
 
     fireEvent.click(screen.getByText('Choropleth'));

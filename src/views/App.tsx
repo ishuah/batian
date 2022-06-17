@@ -130,7 +130,7 @@ function App() {
             NAME, VALUE
           </Paragraph>
           <FileInput
-            data-testid="file-input"
+            data-testid="choropleth-file-input"
             name="file"
             accept=".csv"
             multiple={false}
@@ -154,6 +154,7 @@ function App() {
             TITLE, LATITUDE, LONGITUDE, VALUE
           </Paragraph>
           <FileInput
+            data-testid="symbol-file-input"
             name="file"
             accept=".csv"
             multiple={false}
