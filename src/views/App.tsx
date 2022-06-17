@@ -1,9 +1,13 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
+import Papa from 'papaparse';
 import {
   Grommet, Header, Heading, Main, Box, Grid, Button, Select,
   RadioButtonGroup,
+  Paragraph,
+  FileInput,
+  DataTable,
 } from 'grommet';
 import StepLabel from '../components/StepLabel/StepLabel';
 import RenderMap from '../components/RenderMap';
@@ -26,6 +30,7 @@ function App() {
   const [toggleContinue, setToggleContinue] = useState(true);
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
+  const [userData, setUserData] = useState({ data: [], ready: false });
 
   const mapRegions: MapRegions = {
     Africa: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/africa.geojson',
@@ -51,6 +56,122 @@ function App() {
     setCurrentStep(0);
     setToggleContinue(true);
     setMapType('');
+  }
+
+  function parseCSV(file: File) {
+    Papa.parse(file, {
+      header: true,
+      complete(results) {
+        console.log('Finished:', results.data);
+        setUserData({ data: results.data as [], ready: true });
+      },
+    });
+  }
+
+  function renderDataTable() {
+    const columns = Object.keys(userData.data[0]).map((header) => ({ property: header, header }));
+    console.log(columns);
+    return (
+      <DataTable
+        size="small"
+        margin="small"
+        columns={columns}
+        data={userData.data}
+      />
+    );
+  }
+
+  function renderMapDetailsStep() {
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level="4">What type of map do you want to create?</Heading>
+          <RadioButtonGroup
+            name="mapType"
+            options={['Choropleth', 'Symbol']}
+            value={mapType}
+            onChange={(event) => {
+              setToggleContinue(false);
+              setMapType(event.target.value);
+            }}
+          />
+        </Box>
+        { mapType && (
+          <Box>
+            <Heading level="4">Select map</Heading>
+            <Select
+              options={Object.keys(mapRegions)}
+              value={mapRegion}
+              onChange={({ option }) => setMapRegion(option)}
+            />
+          </Box>
+        )}
+      </Box>
+    );
+  }
+
+  function renderChoroplethMapDataInputForm() {
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level="4">Time to add some data</Heading>
+          <Paragraph margin="none">
+            Upload a CSV file with the following structure:
+          </Paragraph>
+          <Paragraph margin="small">
+            NAME, VALUE
+          </Paragraph>
+          <FileInput
+            name="file"
+            accept=".csv"
+            multiple={false}
+            onChange={(event) => {
+              const fileList = event.target.files;
+              if (fileList && fileList.length === 1) {
+                const file = fileList[0];
+                parseCSV(file);
+              }
+            }}
+          />
+          { userData.ready && renderDataTable() }
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderSymbolMapDataInputForm() {
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level="4">Time to add some data</Heading>
+          <Paragraph margin="none">
+            Upload a CSV file with the following structure:
+          </Paragraph>
+          <Paragraph margin="small">
+            TITLE, LATITUDE, LONGITUDE, VALUE
+          </Paragraph>
+          <FileInput
+            name="file"
+            accept=".csv"
+            multiple={false}
+            onChange={(event) => {
+              const fileList = event.target.files;
+              if (fileList && fileList.length === 1) {
+                const file = fileList[0];
+                parseCSV(file);
+              }
+            }}
+          />
+          { userData.ready && renderDataTable() }
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderDataStep() {
+    if (mapType === 'Symbol') return renderSymbolMapDataInputForm();
+
+    return renderChoroplethMapDataInputForm();
   }
 
   return (
@@ -85,33 +206,8 @@ function App() {
                 }
               </Box>
               <Box pad="medium">
-                { currentStep === 0
-                && (
-                  <Box height="large">
-                    <Box pad="medium">
-                      <Heading level="4">What type of map do you want to create?</Heading>
-                      <RadioButtonGroup
-                        name="mapType"
-                        options={['Choropleth', 'Symbol']}
-                        value={mapType}
-                        onChange={(event) => {
-                          setToggleContinue(false);
-                          setMapType(event.target.value);
-                        }}
-                      />
-                    </Box>
-                    { mapType && (
-                      <Box>
-                        <Heading level="4">Select map</Heading>
-                        <Select
-                          options={Object.keys(mapRegions)}
-                          value={mapRegion}
-                          onChange={({ option }) => setMapRegion(option)}
-                        />
-                      </Box>
-                    )}
-                  </Box>
-                )}
+                { currentStep === 0 && renderMapDetailsStep() }
+                { currentStep === 1 && renderDataStep() }
 
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" />
