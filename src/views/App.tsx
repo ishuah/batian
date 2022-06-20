@@ -27,7 +27,6 @@ type MapRegions = {
 function App() {
   const [mapType, setMapType] = useState('');
   const [mapRegion, setMapRegion] = useState('Africa');
-  const [toggleContinue, setToggleContinue] = useState(true);
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
   const [userData, setUserData] = useState({ data: [], ready: false });
@@ -44,17 +43,14 @@ function App() {
 
   function advanceToNext() {
     setCurrentStep(currentStep + 1);
-    setToggleContinue(true);
   }
 
   function revertToLast() {
     setCurrentStep(currentStep - 1);
-    setToggleContinue(false);
   }
 
   function reset() {
     setCurrentStep(0);
-    setToggleContinue(true);
     setMapType('');
   }
 
@@ -99,7 +95,6 @@ function App() {
             options={['Choropleth', 'Symbol']}
             value={mapType}
             onChange={(event) => {
-              setToggleContinue(false);
               setMapType(event.target.value);
             }}
           />
@@ -172,6 +167,13 @@ function App() {
     return renderChoroplethMapDataInputForm();
   }
 
+  function toggleContinue() {
+    if (currentStep === 0) return mapType === '';
+    if (currentStep === 1) return !userData.ready;
+
+    return true;
+  }
+
   return (
     <Grommet theme={CustomTheme}>
       <Main fill="vertical" pad="none">
@@ -211,7 +213,7 @@ function App() {
                   <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={currentStep === 0} />
                   <Box direction="row">
                     <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
-                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue} />
+                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
                   </Box>
                 </Box>
               </Box>
