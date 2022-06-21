@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 
 type RenderMapProps = {
   url: string
+  userData: { data: never[], ready: boolean }
 }
 
 function RenderMap(props: RenderMapProps) {
@@ -19,7 +20,7 @@ function RenderMap(props: RenderMapProps) {
   const path = d3.geoPath().projection(projection);
 
   useEffect(() => {
-    const { url } = props;
+    const { url, userData } = props;
     svg.selectAll('*').remove();
 
     d3.json(url)
@@ -40,6 +41,18 @@ function RenderMap(props: RenderMapProps) {
           .attr('fill', '#c9d1da')
           .attr('stroke', 'white')
           .attr('d', path as any);
+
+        svg.append('g')
+          .selectAll('circle')
+          .data(userData.data)
+          .join('circle')
+          // eslint-disable-next-line dot-notation
+          .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
+          .attr('r', 5)
+          .attr('fill', '#3d9fa0')
+          .append('title')
+          // eslint-disable-next-line dot-notation
+          .text((d) => d['TITLE']);
       });
   }, [props]);
   return (

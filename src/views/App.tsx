@@ -219,7 +219,7 @@ function App() {
               </Box>
             </Box>
             <Box gridArea="main">
-              <RenderMap url={mapRegions[mapRegion]} />
+              <RenderMap url={mapRegions[mapRegion]} userData={userData} />
             </Box>
           </Grid>
         </Box>
