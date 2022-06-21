@@ -78,7 +78,9 @@ function App() {
       <DataTable
         data-testid="data-table"
         size="small"
-        margin="small"
+        margin={{ top: 'large' }}
+        background="white"
+        border
         columns={columns}
         data={userData.data}
       />
@@ -190,7 +192,7 @@ function App() {
               { name: 'main', start: [1, 0], end: [1, 0] },
             ]}
           >
-            <Box gridArea="nav" background="white">
+            <Box gridArea="nav">
               <Box direction="row" pad="medium">
                 {
                   steps
@@ -218,8 +220,10 @@ function App() {
                 </Box>
               </Box>
             </Box>
-            <Box gridArea="main">
-              <RenderMap url={mapRegions[mapRegion]} userData={userData} />
+            <Box gridArea="main" height="large">
+              <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
+                <RenderMap url={mapRegions[mapRegion]} userData={userData} />
+              </Box>
             </Box>
           </Grid>
         </Box>

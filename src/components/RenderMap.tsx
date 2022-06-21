@@ -10,8 +10,7 @@ function RenderMap(props: RenderMapProps) {
   const svg = d3
     .select('#RenderMap')
     .attr('width', 720)
-    .attr('height', 600)
-    .attr('style', 'background-color: white');
+    .attr('height', 600);
 
   const projection = d3
     .geoMercator()
