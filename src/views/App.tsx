@@ -8,6 +8,7 @@ import {
   Paragraph,
   FileInput,
   DataTable,
+  TextInput,
 } from 'grommet';
 import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
@@ -25,6 +26,7 @@ type MapRegions = {
 }
 
 function App() {
+  const [mapTitle, setMapTitle] = useState('[Map title]');
   const [mapType, setMapType] = useState('');
   const [mapRegion, setMapRegion] = useState('Africa');
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
@@ -91,6 +93,12 @@ function App() {
     return (
       <Box height="large">
         <Box pad="medium">
+          <Heading level="4">Map details</Heading>
+          <TextInput
+            placeholder="[Map title]"
+            value={mapTitle}
+            onChange={(event) => setMapTitle(event.target.value)}
+          />
           <Heading level="4">What type of map do you want to create?</Heading>
           <RadioButtonGroup
             name="mapType"
@@ -222,6 +230,7 @@ function App() {
             </Box>
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
+                <Heading level="3" margin="medium">{mapTitle}</Heading>
                 <RenderMap url={mapRegions[mapRegion]} userData={userData} />
               </Box>
             </Box>
