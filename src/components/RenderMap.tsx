@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 
 type RenderMapProps = {
   url: string
+  mapType: string
   userData: { data: never[], ready: boolean }
 }
 
@@ -19,7 +20,7 @@ function RenderMap(props: RenderMapProps) {
   const path = d3.geoPath().projection(projection);
 
   useEffect(() => {
-    const { url, userData } = props;
+    const { url, userData, mapType } = props;
     svg.selectAll('*').remove();
 
     d3.json(url)
@@ -41,17 +42,19 @@ function RenderMap(props: RenderMapProps) {
           .attr('stroke', 'white')
           .attr('d', path as any);
 
-        svg.append('g')
-          .selectAll('circle')
-          .data(userData.data)
-          .join('circle')
-          // eslint-disable-next-line dot-notation
-          .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
-          .attr('r', 5)
-          .attr('fill', '#3d9fa0')
-          .append('title')
-          // eslint-disable-next-line dot-notation
-          .text((d) => d['TITLE']);
+        if (mapType === 'Symbol') {
+          svg.append('g')
+            .selectAll('circle')
+            .data(userData.data)
+            .join('circle')
+            // eslint-disable-next-line dot-notation
+            .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
+            .attr('r', 5)
+            .attr('fill', '#3d9fa0')
+            .append('title')
+            // eslint-disable-next-line dot-notation
+            .text((d) => d['TITLE']);
+        }
       });
   }, [props]);
   return (

@@ -231,7 +231,7 @@ function App() {
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
                 <Heading level="3" margin="medium">{mapTitle}</Heading>
-                <RenderMap url={mapRegions[mapRegion]} userData={userData} />
+                <RenderMap url={mapRegions[mapRegion]} mapType={mapType} userData={userData} />
               </Box>
             </Box>
           </Grid>
