@@ -23,39 +23,41 @@ function RenderMap(props: RenderMapProps) {
     const { url, userData, mapType } = props;
     svg.selectAll('*').remove();
 
-    d3.json(url)
-      .then((data: any) => {
-        const b = path.bounds(data);
-        const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / 720, (b[1][1] - b[0][1]) / 600);
-        const translate: [number, number] = [(720 - scale * (b[1][0] + b[0][0])) / 2,
-          (600 - scale * (b[1][1] + b[0][1])) / 2];
-        projection
-          .scale(scale)
-          .translate(translate);
-        svg
-          .selectAll('path')
-          .data(data.features)
-          .enter()
-          .append('path')
-          .attr('class', 'country')
-          .attr('fill', '#c9d1da')
-          .attr('stroke', 'white')
-          .attr('d', path as any);
+    const getD3Data = async () => {
+      const data = await d3.json(url) as any;
+      const b = path.bounds(data);
+      const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / 720, (b[1][1] - b[0][1]) / 600);
+      const translate: [number, number] = [(720 - scale * (b[1][0] + b[0][0])) / 2,
+        (600 - scale * (b[1][1] + b[0][1])) / 2];
+      projection
+        .scale(scale)
+        .translate(translate);
+      svg
+        .selectAll('path')
+        .data(data.features)
+        .enter()
+        .append('path')
+        .attr('class', 'country')
+        .attr('fill', '#c9d1da')
+        .attr('stroke', 'white')
+        .attr('d', path as any);
 
-        if (mapType === 'Symbol') {
-          svg.append('g')
-            .selectAll('circle')
-            .data(userData.data)
-            .join('circle')
-            // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
-            .attr('r', 5)
-            .attr('fill', '#3d9fa0')
-            .append('title')
-            // eslint-disable-next-line dot-notation
-            .text((d) => d['TITLE']);
-        }
-      });
+      if (mapType === 'Symbol') {
+        svg.append('g')
+          .selectAll('circle')
+          .data(userData.data)
+          .join('circle')
+          // eslint-disable-next-line dot-notation
+          .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
+          .attr('r', 5)
+          .attr('fill', '#3d9fa0')
+          .append('title')
+          // eslint-disable-next-line dot-notation
+          .text((d) => d['TITLE']);
+      }
+    };
+
+    getD3Data();
   }, [props]);
   return (
     <svg id="RenderMap" width="720" height="600" />
