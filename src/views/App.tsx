@@ -9,6 +9,7 @@ import {
   FileInput,
   DataTable,
   TextInput,
+  Text,
 } from 'grommet';
 import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
@@ -25,6 +26,18 @@ type MapRegions = {
   [key: string]: string
 }
 
+type ChoroplethDataKeys = {
+  name: string
+  values: string
+}
+
+type SymbolDataKeys = {
+  latitude: string
+  longitude: string
+  sizeValues: string
+  colorValues: string
+}
+
 function App() {
   const [mapTitle, setMapTitle] = useState('[Map title]');
   const [mapType, setMapType] = useState('');
@@ -32,6 +45,10 @@ function App() {
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
   const [userData, setUserData] = useState({ data: [], ready: false });
+  const [choroplethDataKeys, setChoroplethDataKeys] = useState<ChoroplethDataKeys>({ name: '', values: '' });
+  const [symbolDataKeys, setSymbolDataKeys] = useState<SymbolDataKeys>({
+    latitude: '', longitude: '', sizeValues: '', colorValues: '',
+  });
 
   const mapRegions: MapRegions = {
     Africa: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/africa.geojson',
@@ -125,15 +142,15 @@ function App() {
 
   function renderChoroplethMapDataInputForm() {
     return (
-      <Box height="large">
+      <Box height="xlarge">
         <Box pad="medium">
           <Heading level="4">Time to add some data</Heading>
-          <Paragraph margin="none">
-            Upload a CSV file with the following structure:
+          <Paragraph margin={{ bottom: 'medium' }} fill>
+            Upload a CSV file containing a column that corresponds to the name of countries in&nbsp;
+            {mapRegion}
+            .
           </Paragraph>
-          <Paragraph margin="small">
-            NAME, VALUE
-          </Paragraph>
+
           <FileInput
             data-testid="choropleth-file-input"
             name="file"
@@ -141,6 +158,7 @@ function App() {
             multiple={false}
             onChange={onFileUpload}
           />
+
           { userData.ready && renderDataTable() }
         </Box>
       </Box>
@@ -152,12 +170,11 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level="4">Time to add some data</Heading>
-          <Paragraph margin="none">
-            Upload a CSV file with the following structure:
+          <Paragraph margin={{ bottom: 'medium' }} fill>
+            Upload a CSV file containing the points you want to map.&nbsp;
+            This file should contain a longitude and a latitude column.
           </Paragraph>
-          <Paragraph margin="small">
-            TITLE, LATITUDE, LONGITUDE, VALUE
-          </Paragraph>
+
           <FileInput
             data-testid="symbol-file-input"
             name="file"
@@ -175,6 +192,86 @@ function App() {
     if (mapType === 'Symbol') return renderSymbolMapDataInputForm();
 
     return renderChoroplethMapDataInputForm();
+  }
+
+  function renderSymbolMapRefineInputForm() {
+    const columns = Object.keys(userData.data[0]).map((header) => header);
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level="4">Time to refine your data</Heading>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text alignSelf="start" margin="small">Select column for latitude:</Text>
+            <Select
+              options={columns}
+              alignSelf="start"
+              value={symbolDataKeys.latitude}
+              onChange={({ option }) => setSymbolDataKeys({ ...symbolDataKeys, latitude: option })}
+            />
+          </Box>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text alignSelf="start" margin="small">Select column for longitude:</Text>
+            <Select
+              options={columns}
+              alignSelf="start"
+              value={symbolDataKeys.longitude}
+              onChange={({ option }) => setSymbolDataKeys({ ...symbolDataKeys, longitude: option })}
+            />
+          </Box>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text alignSelf="start" margin="small">Select column for size:</Text>
+            <Select
+              options={columns}
+              alignSelf="start"
+              value={symbolDataKeys.sizeValues}
+              onChange={
+                ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, sizeValues: option })
+              }
+            />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderChoroplethMapRefineInputForm() {
+    const columns = Object.keys(userData.data[0]).map((header) => header);
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level="4">Time to refine your data</Heading>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text alignSelf="start" margin="small">Select column for name:</Text>
+            <Select
+              options={columns}
+              value={choroplethDataKeys.name}
+              alignSelf="end"
+              onChange={({ option }) => setChoroplethDataKeys({
+                ...choroplethDataKeys, name: option,
+              })}
+            />
+          </Box>
+
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text alignSelf="start" margin="small">Select column for value:</Text>
+            <Select
+              options={columns}
+              value={choroplethDataKeys.values}
+              alignSelf="end"
+              onChange={({ option }) => setChoroplethDataKeys({
+                ...choroplethDataKeys, values: option,
+              })}
+            />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderRefineStep() {
+    if (mapType === 'Symbol') return renderSymbolMapRefineInputForm();
+
+    return renderChoroplethMapRefineInputForm();
   }
 
   function toggleContinue() {
@@ -218,6 +315,7 @@ function App() {
               <Box pad="medium">
                 { currentStep === 0 && renderMapDetailsStep() }
                 { currentStep === 1 && renderDataStep() }
+                { currentStep === 2 && renderRefineStep() }
 
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={currentStep === 0} />
@@ -231,7 +329,12 @@ function App() {
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
                 <Heading level="3" margin="medium">{mapTitle}</Heading>
-                <RenderMap url={mapRegions[mapRegion]} mapType={mapType} userData={userData} />
+                <RenderMap
+                  url={mapRegions[mapRegion]}
+                  mapType={mapType}
+                  userData={userData}
+                  dataKeys={mapType && mapType === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
+                />
               </Box>
             </Box>
           </Grid>

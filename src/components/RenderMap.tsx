@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
+import SymbolDataKeys from '../views/App';
 
 type RenderMapProps = {
   url: string
   mapType: string
   userData: { data: never[], ready: boolean }
+  dataKeys: Record<string, string>
 }
 
 function RenderMap(props: RenderMapProps) {
@@ -20,7 +22,12 @@ function RenderMap(props: RenderMapProps) {
   const path = d3.geoPath().projection(projection);
 
   useEffect(() => {
-    const { url, userData, mapType } = props;
+    const {
+      url,
+      userData,
+      mapType,
+      dataKeys,
+    } = props;
     svg.selectAll('*').remove();
 
     const getD3Data = async () => {
@@ -32,28 +39,84 @@ function RenderMap(props: RenderMapProps) {
       projection
         .scale(scale)
         .translate(translate);
-      svg
-        .selectAll('path')
-        .data(data.features)
-        .enter()
-        .append('path')
-        .attr('class', 'country')
-        .attr('fill', '#c9d1da')
-        .attr('stroke', 'white')
-        .attr('d', path as any);
 
-      if (mapType === 'Symbol') {
-        svg.append('g')
-          .selectAll('circle')
-          .data(userData.data)
-          .join('circle')
-          // eslint-disable-next-line dot-notation
-          .attr('transform', (d) => `translate(${projection([d['LONGITUDE'], d['LATITUDE']])})`)
-          .attr('r', 5)
-          .attr('fill', '#3d9fa0')
-          .append('title')
-          // eslint-disable-next-line dot-notation
-          .text((d) => d['TITLE']);
+      if (mapType === 'Choropleth' && dataKeys.name && dataKeys.values) {
+        const values = userData.data.map((row) => {
+          if (row[dataKeys.values] === undefined) return 0;
+          return Number(row[dataKeys.values]);
+        });
+
+        const regionValue: { [key: string]: number; } = {};
+        userData.data.forEach((row) => {
+          regionValue[row[dataKeys.name]] = Number(row[dataKeys.values]);
+        });
+
+        const max = Math.max(...values);
+        const min = Math.min(...values);
+
+        const color = d3.scaleSequential([min, max], d3.interpolateBlues);
+        svg
+          .selectAll('path')
+          .data(data.features)
+          .enter()
+          .append('path')
+          .attr('class', 'country')
+          .attr('fill', (d: any) => {
+            if (regionValue[d.properties.name]) return color(regionValue[d.properties.name]);
+            return '#c9d1da';
+          })
+          .attr('stroke', 'white')
+          .attr('d', path as any);
+      } else {
+        svg
+          .selectAll('path')
+          .data(data.features)
+          .enter()
+          .append('path')
+          .attr('class', 'country')
+          .attr('fill', '#c9d1da')
+          .attr('stroke', 'white')
+          .attr('d', path as any);
+      }
+
+      if (mapType === 'Symbol' && dataKeys.latitude && dataKeys.longitude) {
+        if (dataKeys.sizeValues) {
+          const values = userData.data.map((row) => {
+            if (row[dataKeys.sizeValues] === undefined) return 0;
+            return Number(row[dataKeys.sizeValues]);
+          });
+
+          const max = Math.max(...values);
+          const min = Math.min(...values);
+
+          const size = d3.scaleLinear()
+            .domain([min, max])
+            .range([2, 15]);
+
+          svg.append('g')
+            .selectAll('circle')
+            .data(userData.data)
+            .join('circle')
+            // eslint-disable-next-line dot-notation
+            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
+            .attr('r', (d) => size(d[dataKeys.sizeValues]))
+            .attr('fill', '#3d9fa0')
+            .append('title')
+            // eslint-disable-next-line dot-notation
+            .text((d) => d['Title']);
+        } else {
+          svg.append('g')
+            .selectAll('circle')
+            .data(userData.data)
+            .join('circle')
+            // eslint-disable-next-line dot-notation
+            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
+            .attr('r', 5)
+            .attr('fill', '#3d9fa0')
+            .append('title')
+            // eslint-disable-next-line dot-notation
+            .text((d) => d['Title']);
+        }
       }
     };
 
