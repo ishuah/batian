@@ -39,7 +39,7 @@ type SymbolDataKeys = {
 }
 
 function App() {
-  const [mapTitle, setMapTitle] = useState('[Map title]');
+  const [mapTitle, setMapTitle] = useState('');
   const [mapType, setMapType] = useState('');
   const [mapRegion, setMapRegion] = useState('Africa');
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
@@ -328,7 +328,7 @@ function App() {
             </Box>
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
-                <Heading level="3" margin="medium">{mapTitle}</Heading>
+                <Heading level="3" margin="medium">{mapTitle || '[Map Title]'}</Heading>
                 <RenderMap
                   url={mapRegions[mapRegion]}
                   mapType={mapType}
