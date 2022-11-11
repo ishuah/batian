@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './views/App';
 import NotFound from './views/NotFound';
 
-const APP_PATH = "/batian"
+const APP_PATH = '/batian';
 
 export default function AppRoutes() {
   return (
