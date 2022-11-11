@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/batian/static/css/main.343a5906.css",
+    "main.js": "/batian/static/js/main.2e91f675.js",
+    "static/js/787.2794bd77.chunk.js": "/batian/static/js/787.2794bd77.chunk.js",
+    "index.html": "/batian/index.html",
+    "main.343a5906.css.map": "/batian/static/css/main.343a5906.css.map",
+    "main.2e91f675.js.map": "/batian/static/js/main.2e91f675.js.map",
+    "787.2794bd77.chunk.js.map": "/batian/static/js/787.2794bd77.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.343a5906.css",
+    "static/js/main.2e91f675.js"
+  ]
+}
