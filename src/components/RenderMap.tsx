@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
-import SymbolDataKeys from '../views/App';
 
 type RenderMapProps = {
   url: string
@@ -9,6 +8,7 @@ type RenderMapProps = {
   dataKeys: Record<string, string>
 }
 
+// TODO: cleanup this component
 function RenderMap(props: RenderMapProps) {
   const svg = d3
     .select('#RenderMap')
