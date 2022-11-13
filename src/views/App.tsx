@@ -298,8 +298,14 @@ function App() {
             <Box>
               <Paragraph margin="medium">
                 <Text margin="none">
-                  We couldn&#39;t match {refineResult.mismatchedRegions.length} entries from your file,&nbsp;
-                  please make sure your data matches the country names for {mapRegion}.
+                  We couldn&#39;t match&nbsp;
+                  {refineResult.mismatchedRegions.length}
+                  &nbsp;entries from your file.
+                  &nbsp;Your visualization might not be complete.
+                  To resolve this issue, please make sure your data
+                  &nbsp;matches the country names for&nbsp;
+                  {mapRegion}
+                  .&nbsp;
                 </Text>
               </Paragraph>
             </Box>
