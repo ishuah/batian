@@ -71,6 +71,12 @@ function App() {
   function reset() {
     setCurrentStep(0);
     setMapType('');
+    setMapTitle('');
+    setUserData({ data: [], ready: false });
+    setChoroplethDataKeys({ name: '', values: '' });
+    setSymbolDataKeys({
+      latitude: '', longitude: '', sizeValues: '', colorValues: '',
+    });
   }
 
   function parseCSV(file: File) {
