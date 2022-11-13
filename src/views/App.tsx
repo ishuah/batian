@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import {
   Grommet, Header, Heading, Main, Box, Grid, Button, Select,
@@ -49,6 +49,12 @@ function App() {
   const [symbolDataKeys, setSymbolDataKeys] = useState<SymbolDataKeys>({
     latitude: '', longitude: '', sizeValues: '', colorValues: '',
   });
+  const [refineResult, setChoroplethRefineResult] = useState(
+    {
+      mismatchedRegions: [],
+      regionsMissingFromData: [],
+    },
+  );
 
   const mapRegions: MapRegions = {
     Africa: 'batian/geojson/africa.geojson',
@@ -59,6 +65,23 @@ function App() {
     'South America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/south-america.geojson',
     'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
   };
+
+  useEffect(() => {
+    if (!choroplethDataKeys.name) return;
+    fetch(mapRegions[mapRegion])
+      .then((response) => response.json())
+      .then((geojson) => {
+        const userDataRegions: string[] = userData.data.map((row) => row[choroplethDataKeys.name]);
+        const regions: string[] = geojson.features.map((x: any) => x.properties.name);
+        const mismatchedRegions = userDataRegions.filter(
+          (region) => !regions.includes(region),
+        ) as [];
+        const regionsMissingFromData = regions.filter(
+          (region) => !userDataRegions.includes(region),
+        ) as [];
+        setChoroplethRefineResult({ mismatchedRegions, regionsMissingFromData });
+      });
+  }, [choroplethDataKeys.name]);
 
   function advanceToNext() {
     setCurrentStep(currentStep + 1);
@@ -269,6 +292,18 @@ function App() {
               })}
             />
           </Box>
+
+          {choroplethDataKeys.name
+          && (
+            <Box>
+              <Paragraph margin="medium">
+                <Text margin="none">
+                  We couldn&#39;t match {refineResult.mismatchedRegions.length} entries from your file,&nbsp;
+                  please make sure your data matches the country names for {mapRegion}.
+                </Text>
+              </Paragraph>
+            </Box>
+          )}
         </Box>
       </Box>
     );
