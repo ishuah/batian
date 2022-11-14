@@ -57,7 +57,7 @@ function App() {
   );
 
   const mapRegions: MapRegions = {
-    Africa: 'batian/geojson/africa.geojson',
+    Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
     Asia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/asia.geojson',
     Australia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/australia.geojson',
     Europe: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/europe.geojson',
