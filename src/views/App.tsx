@@ -296,12 +296,13 @@ function App() {
           {choroplethDataKeys.name
           && (
             <Box>
-              <Paragraph margin="medium">
+              <Paragraph margin="medium" size="large">
+                <Heading level={4} margin="none">Data Check</Heading>
                 <Text margin="none">
                   We couldn&#39;t match&nbsp;
                   {refineResult.mismatchedRegions.length}
-                  &nbsp;entries from your file.
-                  &nbsp;Your visualization might not be complete.
+                  &nbsp;entries from your file,
+                  &nbsp;your visualization might not be complete.
                   To resolve this issue, please make sure your data
                   &nbsp;matches the country names for&nbsp;
                   {mapRegion}
