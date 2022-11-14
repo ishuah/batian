@@ -230,7 +230,7 @@ function App() {
         <Box pad="medium">
           <Heading level="4">Time to refine your data</Heading>
           <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="start" margin="small">Select column for latitude:</Text>
+            <Text alignSelf="end" margin="small">Select column for latitude:</Text>
             <Select
               options={columns}
               alignSelf="start"
@@ -239,7 +239,7 @@ function App() {
             />
           </Box>
           <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="start" margin="small">Select column for longitude:</Text>
+            <Text alignSelf="end" margin="small">Select column for longitude:</Text>
             <Select
               options={columns}
               alignSelf="start"
@@ -295,19 +295,17 @@ function App() {
 
           {choroplethDataKeys.name
           && (
-            <Box>
-              <Paragraph margin="medium" size="large">
-                <Heading level={4} margin="none">Data Check</Heading>
-                <Text margin="none">
-                  We couldn&#39;t match&nbsp;
-                  {refineResult.mismatchedRegions.length}
-                  &nbsp;entries from your file,
-                  &nbsp;your visualization might not be complete.
-                  To resolve this issue, please make sure your data
-                  &nbsp;matches the country names for&nbsp;
-                  {mapRegion}
-                  .&nbsp;
-                </Text>
+            <Box pad="medium">
+              <Heading level={4} margin="none">Data Check</Heading>
+              <Paragraph margin="none">
+                We couldn&#39;t match&nbsp;
+                {refineResult.mismatchedRegions.length}
+                &nbsp;entries from your file,
+                &nbsp;your visualization might not be complete.
+                To resolve this issue, please make sure your data
+                &nbsp;matches the country names for&nbsp;
+                {mapRegion}
+                .&nbsp;
               </Paragraph>
             </Box>
           )}
@@ -325,6 +323,11 @@ function App() {
   function toggleContinue() {
     if (currentStep === 0) return mapType === '';
     if (currentStep === 1) return !userData.ready;
+    if (currentStep === 2) {
+      if (mapType === 'Symbol') return !symbolDataKeys.latitude || !symbolDataKeys.longitude || !symbolDataKeys.sizeValues;
+
+      return !choroplethDataKeys.name || !choroplethDataKeys.values;
+    }
 
     return true;
   }
