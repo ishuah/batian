@@ -71,7 +71,7 @@ function App() {
     'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
   };
 
-  const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Cool', 'Warm', 'Spectral'];
+  const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Greens', 'Cool', 'Warm', 'Spectral'];
   const symbolColorOptions: string[] = ['Red', 'Blue', 'Green', 'Orange'];
   const symbolShapeOptions: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
 

@@ -30,6 +30,8 @@ function RenderMap(props: RenderMapProps) {
         return d3.interpolateReds;
       case 'Blues':
         return d3.interpolateBlues;
+      case 'Greens':
+        return d3.interpolateGreens;
       case 'Cool':
         return d3.interpolateCool;
       case 'Warm':
