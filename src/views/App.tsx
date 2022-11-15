@@ -55,6 +55,7 @@ function App() {
   const [mismatchedRegionsCount, setMismatchedRegionsCount] = useState(0);
   const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
   const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
+  const [symbolShape, setSymbolShape] = useState('Circle');
 
   const mapRegions: MapRegions = {
     Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
@@ -68,6 +69,7 @@ function App() {
 
   const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Cool', 'Warm', 'Spectral'];
   const symbolColorOptions: string[] = ['Red', 'Blue', 'Green', 'Orange'];
+  const symbolShapeOptions: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
 
   useEffect(() => {
     if (!choroplethDataKeys.name) return;
@@ -346,6 +348,14 @@ function App() {
               onChange={({ option }) => setSymbolColorScheme(option)}
             />
           </Box>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text margin="small">Select symbol shape:</Text>
+            <Select
+              options={symbolShapeOptions}
+              value={symbolShape}
+              onChange={({ option }) => setSymbolShape(option)}
+            />
+          </Box>
         </Box>
       </Box>
     );
@@ -443,6 +453,7 @@ function App() {
                   dataKeys={mapType && mapType === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
                   choroplethColorScheme={choroplethColorScheme}
                   symbolColorScheme={symbolColorScheme}
+                  shape={symbolShape}
                 />
               </Box>
             </Box>

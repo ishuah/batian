@@ -8,6 +8,7 @@ type RenderMapProps = {
   dataKeys: Record<string, string>
   choroplethColorScheme: string
   symbolColorScheme: string
+  shape: string
 }
 
 // TODO: cleanup this component
@@ -55,6 +56,21 @@ function RenderMap(props: RenderMapProps) {
     }
   };
 
+  const symbolShape = (shapeString: string) => {
+    switch (shapeString) {
+      case 'Circle':
+        return d3.symbolCircle;
+      case 'Square':
+        return d3.symbolSquare;
+      case 'Triangle':
+        return d3.symbolTriangle;
+      case 'Diamond':
+        return d3.symbolDiamond;
+      default:
+        return d3.symbolCircle;
+    }
+  };
+
   useEffect(() => {
     const {
       url,
@@ -63,6 +79,7 @@ function RenderMap(props: RenderMapProps) {
       dataKeys,
       choroplethColorScheme,
       symbolColorScheme,
+      shape,
     } = props;
     svg.selectAll('*').remove();
 
@@ -127,15 +144,16 @@ function RenderMap(props: RenderMapProps) {
 
           const size = d3.scaleSequential()
             .domain([min, max])
-            .range([4, 20]);
+            .range([50, 1000]);
 
           svg.append('g')
-            .selectAll('circle')
+            .selectAll('path')
             .data(userData.data)
-            .join('circle')
+            .join('path')
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('r', (d) => size(d[dataKeys.sizeValues]))
+            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(size(d[dataKeys.sizeValues]))())
+            // .attr('r', (d) => size(d[dataKeys.sizeValues]))
             .attr('fill', symbolColor(symbolColorScheme))
             .attr('opacity', 0.7)
             .append('title')
@@ -143,12 +161,13 @@ function RenderMap(props: RenderMapProps) {
             .text((d) => d['Title']);
         } else {
           svg.append('g')
-            .selectAll('circle')
+            .selectAll('path')
             .data(userData.data)
-            .join('circle')
+            .join('path')
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('r', 5)
+            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(5)())
+            // .attr('r', 5)
             .attr('fill', symbolColor(symbolColorScheme))
             .attr('opacity', 0.5)
             .append('title')
