@@ -284,6 +284,21 @@ function App() {
                 />
               </TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text alignSelf="start" margin="small">Select column for color (optional):</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  alignSelf="end"
+                  value={symbolDataKeys.colorValues}
+                  onChange={
+                    ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, colorValues: option })
+                  }
+                />
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Box>
       </Box>
@@ -377,18 +392,6 @@ function App() {
           <TableBody>
             <TableRow>
               <TableCell>
-                <Text margin="small">Select color:</Text>
-              </TableCell>
-              <TableCell>
-                <Select
-                  options={symbolColorOptions}
-                  value={symbolColorScheme}
-                  onChange={({ option }) => setSymbolColorScheme(option)}
-                />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
                 <Text margin="small">Select symbol shape:</Text>
               </TableCell>
               <TableCell>
@@ -396,6 +399,18 @@ function App() {
                   options={symbolShapeOptions}
                   value={symbolShape}
                   onChange={({ option }) => setSymbolShape(option)}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text margin="small">Select color:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={symbolColorOptions}
+                  value={symbolColorScheme}
+                  onChange={({ option }) => setSymbolColorScheme(option)}
                 />
               </TableCell>
             </TableRow>

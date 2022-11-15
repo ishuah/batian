@@ -119,6 +119,7 @@ function RenderMap(props: RenderMapProps) {
             return '#c9d1da';
           })
           .attr('stroke', 'white')
+          .attr('stroke-width', 0.5)
           .attr('d', path as any);
       } else {
         svg
@@ -129,6 +130,7 @@ function RenderMap(props: RenderMapProps) {
           .attr('class', 'country')
           .attr('fill', '#c9d1da')
           .attr('stroke', 'white')
+          .attr('stroke-width', 0.5)
           .attr('d', path as any);
       }
 
@@ -180,7 +182,7 @@ function RenderMap(props: RenderMapProps) {
     getD3Data();
   }, [props]);
   return (
-    <svg id="RenderMap" width="720" height="600" />
+    <svg id="RenderMap" width="720" height="720" />
   );
 }
 
