@@ -10,7 +10,10 @@ import {
   DataTable,
   TextInput,
   Text,
+  Card,
+  CardBody,
 } from 'grommet';
+
 import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
 
@@ -49,12 +52,8 @@ function App() {
   const [symbolDataKeys, setSymbolDataKeys] = useState<SymbolDataKeys>({
     latitude: '', longitude: '', sizeValues: '', colorValues: '',
   });
-  const [refineResult, setChoroplethRefineResult] = useState(
-    {
-      mismatchedRegions: [],
-      regionsMissingFromData: [],
-    },
-  );
+  const [mismatchedRegionsCount, setMismatchedRegionsCount] = useState(0);
+  const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
 
   const mapRegions: MapRegions = {
     Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
@@ -66,6 +65,8 @@ function App() {
     'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
   };
 
+  const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Cool', 'Warm', 'Spectral'];
+
   useEffect(() => {
     if (!choroplethDataKeys.name) return;
     fetch(mapRegions[mapRegion])
@@ -76,10 +77,7 @@ function App() {
         const mismatchedRegions = userDataRegions.filter(
           (region) => !regions.includes(region),
         ) as [];
-        const regionsMissingFromData = regions.filter(
-          (region) => !userDataRegions.includes(region),
-        ) as [];
-        setChoroplethRefineResult({ mismatchedRegions, regionsMissingFromData });
+        setMismatchedRegionsCount(mismatchedRegions.length);
       });
   }, [choroplethDataKeys.name]);
 
@@ -295,19 +293,32 @@ function App() {
 
           {choroplethDataKeys.name
           && (
-            <Box pad="medium">
-              <Heading level={4} margin="none">Data Check</Heading>
-              <Paragraph margin="none">
-                We couldn&#39;t match&nbsp;
-                {refineResult.mismatchedRegions.length}
-                &nbsp;entries from your file,
-                &nbsp;your visualization might not be complete.
-                To resolve this issue, please make sure your data
-                &nbsp;matches the country names for&nbsp;
-                {mapRegion}
-                .&nbsp;
-              </Paragraph>
-            </Box>
+            <Card margin="small" pad="small" height="small" width="large" background="white">
+              <CardBody pad="xsmall" width="large">
+                { (mismatchedRegionsCount > 0)
+                  ? (
+                    <Paragraph margin="none">
+                      We couldn&#39;t match&nbsp;
+                      {mismatchedRegionsCount}
+                      &nbsp;entries from your file,
+                      &nbsp;your visualization might not be complete.
+                      To resolve this issue, please make sure your data
+                      &nbsp;matches the country names for&nbsp;
+                      {mapRegion}
+                      .&nbsp;
+                    </Paragraph>
+                  )
+                  : (
+                    <Paragraph margin="none">
+                      Data looks good! All the entries in your map correspond to the set&nbsp;
+                      of country names for&nbsp;
+                      {mapRegion}
+                      .&nbsp;
+                    </Paragraph>
+                  )}
+                {}
+              </CardBody>
+            </Card>
           )}
         </Box>
       </Box>
@@ -318,6 +329,40 @@ function App() {
     if (mapType === 'Symbol') return renderSymbolMapRefineInputForm();
 
     return renderChoroplethMapRefineInputForm();
+  }
+
+  function renderSymbolVisualizeStep() {
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level={3}>Colors</Heading>
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderChoroplethVisualizeStep() {
+    return (
+      <Box height="large">
+        <Box pad="medium">
+          <Heading level={3}>Colors</Heading>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text margin="small">Select palette:</Text>
+            <Select
+              options={choroplethColorOptions}
+              value={choroplethColorScheme}
+              onChange={({ option }) => setChoroplethColorScheme(option)}
+            />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  function renderVisualizeStep() {
+    if (mapType === 'Symbol') return renderSymbolVisualizeStep();
+
+    return renderChoroplethVisualizeStep();
   }
 
   function toggleContinue() {
@@ -367,6 +412,7 @@ function App() {
                 { currentStep === 0 && renderMapDetailsStep() }
                 { currentStep === 1 && renderDataStep() }
                 { currentStep === 2 && renderRefineStep() }
+                { currentStep === 3 && renderVisualizeStep() }
 
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={currentStep === 0} />
@@ -385,6 +431,7 @@ function App() {
                   mapType={mapType}
                   userData={userData}
                   dataKeys={mapType && mapType === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
+                  choroplethColorScheme={choroplethColorScheme}
                 />
               </Box>
             </Box>

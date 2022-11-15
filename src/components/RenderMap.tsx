@@ -6,6 +6,7 @@ type RenderMapProps = {
   mapType: string
   userData: { data: never[], ready: boolean }
   dataKeys: Record<string, string>
+  choroplethColorScheme: string
 }
 
 // TODO: cleanup this component
@@ -21,12 +22,30 @@ function RenderMap(props: RenderMapProps) {
     .translate([0, 0]);
   const path = d3.geoPath().projection(projection);
 
+  const choroplethColor = (colorString: string) => {
+    switch (colorString) {
+      case 'Reds':
+        return d3.interpolateReds;
+      case 'Blues':
+        return d3.interpolateBlues;
+      case 'Cool':
+        return d3.interpolateCool;
+      case 'Warm':
+        return d3.interpolateWarm;
+      case 'Spectral':
+        return d3.interpolateSpectral;
+      default:
+        return d3.interpolateReds;
+    }
+  };
+
   useEffect(() => {
     const {
       url,
       userData,
       mapType,
       dataKeys,
+      choroplethColorScheme,
     } = props;
     svg.selectAll('*').remove();
 
@@ -54,7 +73,7 @@ function RenderMap(props: RenderMapProps) {
         const max = Math.max(...values);
         const min = Math.min(...values);
 
-        const color = d3.scaleSequential([min, max], d3.interpolateBlues);
+        const color = d3.scaleSequential([min, max], choroplethColor(choroplethColorScheme));
         svg
           .selectAll('path')
           .data(data.features)
