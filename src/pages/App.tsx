@@ -15,7 +15,6 @@ import {
   TableCell,
   TableRow,
   TableBody,
-  Tab,
 } from 'grommet';
 
 import StepLabel from '../components/StepLabel';
