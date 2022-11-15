@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Routes } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
-import App from './views/App';
-import NotFound from './views/NotFound';
+import App from './pages/App';
+import NotFound from './pages/NotFound';
 
 const APP_PATH = '/batian';
 

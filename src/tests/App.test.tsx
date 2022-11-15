@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import App from '../views/App';
+import App from '../pages/App';
 
 describe('<App />', () => {
   test('renders first step', () => {
