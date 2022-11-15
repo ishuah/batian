@@ -12,6 +12,10 @@ import {
   Text,
   Card,
   CardBody,
+  TableCell,
+  TableRow,
+  TableBody,
+  Tab,
 } from 'grommet';
 
 import StepLabel from '../components/StepLabel';
@@ -102,6 +106,9 @@ function App() {
     setSymbolDataKeys({
       latitude: '', longitude: '', sizeValues: '', colorValues: '',
     });
+    setChoroplethColorScheme('Reds');
+    setSymbolColorScheme('Red');
+    setSymbolShape('Circle');
   }
 
   function parseCSV(file: File) {
@@ -231,35 +238,53 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level="4">Time to refine your data</Heading>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="end" margin="small">Select column for latitude:</Text>
-            <Select
-              options={columns}
-              alignSelf="start"
-              value={symbolDataKeys.latitude}
-              onChange={({ option }) => setSymbolDataKeys({ ...symbolDataKeys, latitude: option })}
-            />
-          </Box>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="end" margin="small">Select column for longitude:</Text>
-            <Select
-              options={columns}
-              alignSelf="start"
-              value={symbolDataKeys.longitude}
-              onChange={({ option }) => setSymbolDataKeys({ ...symbolDataKeys, longitude: option })}
-            />
-          </Box>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="start" margin="small">Select column for size:</Text>
-            <Select
-              options={columns}
-              alignSelf="start"
-              value={symbolDataKeys.sizeValues}
-              onChange={
-                ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, sizeValues: option })
-              }
-            />
-          </Box>
+          <TableBody>
+            <TableRow>
+              <TableCell scope="row">
+                <Text alignSelf="start" margin="small">Select column for latitude:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  alignSelf="end"
+                  value={symbolDataKeys.latitude}
+                  onChange={({ option }) => {
+                    setSymbolDataKeys({ ...symbolDataKeys, latitude: option });
+                  }}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text alignSelf="start" margin="small">Select column for longitude:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  alignSelf="end"
+                  value={symbolDataKeys.longitude}
+                  onChange={({ option }) => {
+                    setSymbolDataKeys({ ...symbolDataKeys, longitude: option });
+                  }}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text alignSelf="start" margin="small">Select column for size:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  alignSelf="end"
+                  value={symbolDataKeys.sizeValues}
+                  onChange={
+                    ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, sizeValues: option })
+                  }
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
         </Box>
       </Box>
     );
@@ -271,29 +296,38 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level="4">Time to refine your data</Heading>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="start" margin="small">Select column for name:</Text>
-            <Select
-              options={columns}
-              value={choroplethDataKeys.name}
-              alignSelf="end"
-              onChange={({ option }) => setChoroplethDataKeys({
-                ...choroplethDataKeys, name: option,
-              })}
-            />
-          </Box>
-
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text alignSelf="start" margin="small">Select column for value:</Text>
-            <Select
-              options={columns}
-              value={choroplethDataKeys.values}
-              alignSelf="end"
-              onChange={({ option }) => setChoroplethDataKeys({
-                ...choroplethDataKeys, values: option,
-              })}
-            />
-          </Box>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                <Text alignSelf="start" margin="small">Select column for name:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  value={choroplethDataKeys.name}
+                  alignSelf="end"
+                  onChange={({ option }) => setChoroplethDataKeys({
+                    ...choroplethDataKeys, name: option,
+                  })}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text alignSelf="start" margin="small">Select column for value:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={columns}
+                  value={choroplethDataKeys.values}
+                  alignSelf="end"
+                  onChange={({ option }) => setChoroplethDataKeys({
+                    ...choroplethDataKeys, values: option,
+                  })}
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
 
           {choroplethDataKeys.name
           && (
@@ -340,22 +374,32 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level={3}>Colors</Heading>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text margin="small">Select color:</Text>
-            <Select
-              options={symbolColorOptions}
-              value={symbolColorScheme}
-              onChange={({ option }) => setSymbolColorScheme(option)}
-            />
-          </Box>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text margin="small">Select symbol shape:</Text>
-            <Select
-              options={symbolShapeOptions}
-              value={symbolShape}
-              onChange={({ option }) => setSymbolShape(option)}
-            />
-          </Box>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                <Text margin="small">Select color:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={symbolColorOptions}
+                  value={symbolColorScheme}
+                  onChange={({ option }) => setSymbolColorScheme(option)}
+                />
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                <Text margin="small">Select symbol shape:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={symbolShapeOptions}
+                  value={symbolShape}
+                  onChange={({ option }) => setSymbolShape(option)}
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
         </Box>
       </Box>
     );
@@ -366,14 +410,20 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level={3}>Colors</Heading>
-          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
-            <Text margin="small">Select palette:</Text>
-            <Select
-              options={choroplethColorOptions}
-              value={choroplethColorScheme}
-              onChange={({ option }) => setChoroplethColorScheme(option)}
-            />
-          </Box>
+          <TableBody>
+            <TableRow>
+              <TableCell>
+                <Text margin="small">Select palette:</Text>
+              </TableCell>
+              <TableCell>
+                <Select
+                  options={choroplethColorOptions}
+                  value={choroplethColorScheme}
+                  onChange={({ option }) => setChoroplethColorScheme(option)}
+                />
+              </TableCell>
+            </TableRow>
+          </TableBody>
         </Box>
       </Box>
     );

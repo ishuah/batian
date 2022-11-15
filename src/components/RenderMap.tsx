@@ -16,7 +16,7 @@ function RenderMap(props: RenderMapProps) {
   const svg = d3
     .select('#RenderMap')
     .attr('width', 720)
-    .attr('height', 600);
+    .attr('height', 720);
 
   const projection = d3
     .geoMercator()
@@ -144,7 +144,7 @@ function RenderMap(props: RenderMapProps) {
 
           const size = d3.scaleSequential()
             .domain([min, max])
-            .range([50, 1000]);
+            .range([200, 2000]);
 
           svg.append('g')
             .selectAll('path')
@@ -166,7 +166,7 @@ function RenderMap(props: RenderMapProps) {
             .join('path')
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(5)())
+            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(200)())
             // .attr('r', 5)
             .attr('fill', symbolColor(symbolColorScheme))
             .attr('opacity', 0.5)
