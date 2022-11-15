@@ -54,6 +54,7 @@ function App() {
   });
   const [mismatchedRegionsCount, setMismatchedRegionsCount] = useState(0);
   const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
+  const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
 
   const mapRegions: MapRegions = {
     Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
@@ -66,6 +67,7 @@ function App() {
   };
 
   const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Cool', 'Warm', 'Spectral'];
+  const symbolColorOptions: string[] = ['Red', 'Blue', 'Green', 'Orange'];
 
   useEffect(() => {
     if (!choroplethDataKeys.name) return;
@@ -336,6 +338,14 @@ function App() {
       <Box height="large">
         <Box pad="medium">
           <Heading level={3}>Colors</Heading>
+          <Box direction="row" border={{ side: 'between', color: 'none' }} gap="large" margin="small">
+            <Text margin="small">Select color:</Text>
+            <Select
+              options={symbolColorOptions}
+              value={symbolColorScheme}
+              onChange={({ option }) => setSymbolColorScheme(option)}
+            />
+          </Box>
         </Box>
       </Box>
     );
@@ -432,6 +442,7 @@ function App() {
                   userData={userData}
                   dataKeys={mapType && mapType === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
                   choroplethColorScheme={choroplethColorScheme}
+                  symbolColorScheme={symbolColorScheme}
                 />
               </Box>
             </Box>

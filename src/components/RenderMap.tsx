@@ -7,6 +7,7 @@ type RenderMapProps = {
   userData: { data: never[], ready: boolean }
   dataKeys: Record<string, string>
   choroplethColorScheme: string
+  symbolColorScheme: string
 }
 
 // TODO: cleanup this component
@@ -39,6 +40,21 @@ function RenderMap(props: RenderMapProps) {
     }
   };
 
+  const symbolColor = (colorString: string) => {
+    switch (colorString) {
+      case 'Red':
+        return '#c71e1d';
+      case 'Blue':
+        return '#18a1cd';
+      case 'Green':
+        return '#5ea685';
+      case 'Orange':
+        return '#fa8c00';
+      default:
+        return '#c71e1d';
+    }
+  };
+
   useEffect(() => {
     const {
       url,
@@ -46,6 +62,7 @@ function RenderMap(props: RenderMapProps) {
       mapType,
       dataKeys,
       choroplethColorScheme,
+      symbolColorScheme,
     } = props;
     svg.selectAll('*').remove();
 
@@ -108,9 +125,9 @@ function RenderMap(props: RenderMapProps) {
           const max = Math.max(...values);
           const min = Math.min(...values);
 
-          const size = d3.scaleLinear()
+          const size = d3.scaleSequential()
             .domain([min, max])
-            .range([2, 15]);
+            .range([4, 20]);
 
           svg.append('g')
             .selectAll('circle')
@@ -119,7 +136,8 @@ function RenderMap(props: RenderMapProps) {
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
             .attr('r', (d) => size(d[dataKeys.sizeValues]))
-            .attr('fill', '#3d9fa0')
+            .attr('fill', symbolColor(symbolColorScheme))
+            .attr('opacity', 0.7)
             .append('title')
             // eslint-disable-next-line dot-notation
             .text((d) => d['Title']);
@@ -131,7 +149,8 @@ function RenderMap(props: RenderMapProps) {
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
             .attr('r', 5)
-            .attr('fill', '#3d9fa0')
+            .attr('fill', symbolColor(symbolColorScheme))
+            .attr('opacity', 0.5)
             .append('title')
             // eslint-disable-next-line dot-notation
             .text((d) => d['Title']);
