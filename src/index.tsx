@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import AppRoutes from './AppRoutes';
+import App from './pages/App';
 
 ReactDOM.render(
-  <AppRoutes />,
+  <App />,
   document.getElementById('root'),
 );
 
