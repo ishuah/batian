@@ -28,22 +28,6 @@ const CustomTheme = {
   },
 };
 
-type MapRegions = {
-  [key: string]: string
-}
-
-type ChoroplethDataKeys = {
-  name: string
-  values: string
-}
-
-type SymbolDataKeys = {
-  latitude: string
-  longitude: string
-  sizeValues: string
-  colorValues: string
-}
-
 function App() {
   const [mapTitle, setMapTitle] = useState('');
   const [mapType, setMapType] = useState('');
@@ -60,7 +44,7 @@ function App() {
   const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
   const [symbolShape, setSymbolShape] = useState('Circle');
 
-  const mapRegions: MapRegions = {
+  const mapRegions: Regions = {
     Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
     Asia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/asia.geojson',
     Australia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/australia.geojson',
