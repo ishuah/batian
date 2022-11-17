@@ -8,7 +8,8 @@ describe('<MapDetails />', () => {
     render(
       <RecoilRoot>
         <MapDetails />
-      </RecoilRoot>);
+      </RecoilRoot>,
+    );
 
     expect(screen.getByText(/Map Details?/i)).toBeInTheDocument();
     expect(screen.getByText(/What type of map do you want to create??/i)).toBeInTheDocument();
@@ -16,7 +17,6 @@ describe('<MapDetails />', () => {
     expect(screen.getByPlaceholderText(/[Map title]?/i)).toBeInTheDocument();
 
     const input = screen.getByTestId('map-title') as HTMLInputElement;
-    
     fireEvent.change(input, {
       target: { value: 'The Sternness of Plates' },
     });

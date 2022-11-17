@@ -8,7 +8,8 @@ describe('<App />', () => {
     render(
       <RecoilRoot>
         <App />
-      </RecoilRoot>);
+      </RecoilRoot>,
+    );
     const title = screen.getByText(/What type of map do you want to create?/i);
     expect(title).toBeInTheDocument();
 
@@ -28,7 +29,8 @@ describe('<App />', () => {
     render(
       <RecoilRoot>
         <App />
-      </RecoilRoot>);
+      </RecoilRoot>,
+    );
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
@@ -46,7 +48,8 @@ describe('<App />', () => {
     render(
       <RecoilRoot>
         <App />
-      </RecoilRoot>);
+      </RecoilRoot>,
+    );
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
@@ -62,7 +65,8 @@ describe('<App />', () => {
     render(
       <RecoilRoot>
         <App />
-      </RecoilRoot>);
+      </RecoilRoot>,
+    );
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
