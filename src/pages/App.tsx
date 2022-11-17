@@ -1,26 +1,19 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React, { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import Papa from 'papaparse';
 import {
-  Grommet, Header, Heading, Main, Box, Grid, Button, Select,
-  Paragraph,
-  FileInput,
-  DataTable,
-  Text,
-  Card,
-  CardBody,
-  TableCell,
-  TableRow,
-  TableBody,
+  Box, Button, Card,
+  CardBody, Grid, Grommet, Header, Heading, Main, Paragraph, Select, TableBody, TableCell,
+  TableRow, Text
 } from 'grommet';
+import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
-import StepLabel from '../components/StepLabel';
-import RenderMap from '../components/RenderMap';
-import MapDetails from '../components/MapDetails';
-import { recoilState } from '../store';
 import DataInput from '../components/DataInput';
+import MapDetails from '../components/MapDetails';
+import RenderMap from '../components/RenderMap';
+import StepLabel from '../components/StepLabel';
+import { CHOROPLETH_COLORS, REGIONS, STEPS } from '../constants';
+import { recoilState } from '../store';
 
 const CustomTheme = {
   global: {
@@ -31,104 +24,55 @@ const CustomTheme = {
 };
 
 function App() {
-  const [mapRegion, setMapRegion] = useState('Africa');
-  const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
-  const [currentStep, setCurrentStep] = useState(0);
-  const [userData, setUserData] = useState({ data: [], ready: false });
-  const [choroplethDataKeys, setChoroplethDataKeys] = useState<ChoroplethDataKeys>({ name: '', values: '' });
-  const [symbolDataKeys, setSymbolDataKeys] = useState<SymbolDataKeys>({
-    latitude: '', longitude: '', sizeValues: '', colorValues: '',
-  });
   const [mismatchedRegionsCount, setMismatchedRegionsCount] = useState(0);
   const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
   const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
   const [symbolShape, setSymbolShape] = useState('Circle');
 
-  const appState = useRecoilValue<AppState>(recoilState);
+  const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
-  const mapRegions: Regions = {
-    Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
-    Asia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/asia.geojson',
-    Australia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/australia.geojson',
-    Europe: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/europe.geojson',
-    'North America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/north-america.geojson',
-    'South America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/south-america.geojson',
-    'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
-  };
-
-  const choroplethColorOptions: string[] = ['Reds', 'Blues', 'Greens', 'Cool', 'Warm', 'Spectral'];
   const symbolColorOptions: string[] = ['Red', 'Blue', 'Green', 'Orange'];
   const symbolShapeOptions: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
 
   useEffect(() => {
-    if (!choroplethDataKeys.name) return;
-    fetch(mapRegions[mapRegion])
+    if (!appState.dataKeys.name) return;
+    fetch(REGIONS[appState.map.region])
       .then((response) => response.json())
       .then((geojson) => {
-        const userDataRegions: string[] = userData.data.map((row) => row[choroplethDataKeys.name]);
+        const userDataRegions: string[] = appState.userData.data.map((row) => row[appState.dataKeys.name!]);
         const regions: string[] = geojson.features.map((x: any) => x.properties.name);
         const mismatchedRegions = userDataRegions.filter(
           (region) => !regions.includes(region),
         ) as [];
         setMismatchedRegionsCount(mismatchedRegions.length);
       });
-  }, [choroplethDataKeys.name]);
+  }, [appState.dataKeys.name]);
 
   function advanceToNext() {
-    setCurrentStep(currentStep + 1);
+    const currentStep = appState.currentStep + 1;
+    setAppState({ ...appState, currentStep });
   }
 
   function revertToLast() {
-    setCurrentStep(currentStep - 1);
+    const currentStep = appState.currentStep - 1;
+    setAppState({ ...appState, currentStep });
   }
 
   function reset() {
-    setCurrentStep(0);
-    setUserData({ data: [], ready: false });
-    setChoroplethDataKeys({ name: '', values: '' });
-    setSymbolDataKeys({
-      latitude: '', longitude: '', sizeValues: '', colorValues: '',
+    setAppState({
+      map: { title: '', type: '', region: 'Africa' },
+      userData: { data: [], ready: false },
+      currentStep: 0,
+      dataKeys: {},
     });
+
     setChoroplethColorScheme('Reds');
     setSymbolColorScheme('Red');
     setSymbolShape('Circle');
   }
 
-  function parseCSV(file: File) {
-    Papa.parse(file, {
-      header: true,
-      complete(results) {
-        setUserData({ data: results.data as [], ready: true });
-      },
-    });
-  }
-
-  function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const fileList = event.target.files;
-    if (fileList && fileList.length === 1) {
-      const file = fileList[0];
-      parseCSV(file);
-    }
-  }
-
-  function renderDataTable() {
-    const columns = Object.keys(userData.data[0]).map((header) => ({ property: header, header }));
-
-    return (
-      <DataTable
-        data-testid="data-table"
-        size="small"
-        margin={{ top: 'large' }}
-        background="white"
-        border
-        columns={columns}
-        data={userData.data}
-      />
-    );
-  }
-
   function renderSymbolMapRefineInputForm() {
-    const columns = Object.keys(userData.data[0]).map((header) => header);
+    const columns = Object.keys(appState.userData.data[0]).map((header) => header);
     return (
       <Box height="large">
         <Box pad="medium">
@@ -142,9 +86,12 @@ function App() {
                 <Select
                   options={columns}
                   alignSelf="end"
-                  value={symbolDataKeys.latitude}
+                  value={appState.dataKeys.latitude}
                   onChange={({ option }) => {
-                    setSymbolDataKeys({ ...symbolDataKeys, latitude: option });
+                    setAppState({
+                      ...appState,
+                      dataKeys: { ...appState.dataKeys, latitude: option },
+                    });
                   }}
                 />
               </TableCell>
@@ -157,9 +104,12 @@ function App() {
                 <Select
                   options={columns}
                   alignSelf="end"
-                  value={symbolDataKeys.longitude}
+                  value={appState.dataKeys.longitude}
                   onChange={({ option }) => {
-                    setSymbolDataKeys({ ...symbolDataKeys, longitude: option });
+                    setAppState({
+                      ...appState,
+                      dataKeys: { ...appState.dataKeys, longitude: option },
+                    });
                   }}
                 />
               </TableCell>
@@ -172,9 +122,9 @@ function App() {
                 <Select
                   options={columns}
                   alignSelf="end"
-                  value={symbolDataKeys.sizeValues}
+                  value={appState.dataKeys.sizeValues}
                   onChange={
-                    ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, sizeValues: option })
+                    ({ option }) => setAppState({ ...appState, dataKeys: { ...appState.dataKeys, sizeValues: option }})
                   }
                 />
               </TableCell>
@@ -187,9 +137,9 @@ function App() {
                 <Select
                   options={columns}
                   alignSelf="end"
-                  value={symbolDataKeys.colorValues}
+                  value={appState.dataKeys.colorValues}
                   onChange={
-                    ({ option }) => setSymbolDataKeys({ ...symbolDataKeys, colorValues: option })
+                    ({ option }) => setAppState({ ...appState, dataKeys: { ...appState.dataKeys, colorValues: option }})
                   }
                 />
               </TableCell>
@@ -201,7 +151,7 @@ function App() {
   }
 
   function renderChoroplethMapRefineInputForm() {
-    const columns = Object.keys(userData.data[0]).map((header) => header);
+    const columns = Object.keys(appState.userData.data[0]).map((header) => header);
     return (
       <Box height="large">
         <Box pad="medium">
@@ -214,11 +164,9 @@ function App() {
               <TableCell>
                 <Select
                   options={columns}
-                  value={choroplethDataKeys.name}
+                  value={appState.dataKeys.name}
                   alignSelf="end"
-                  onChange={({ option }) => setChoroplethDataKeys({
-                    ...choroplethDataKeys, name: option,
-                  })}
+                  onChange={({ option }) => setAppState({ ...appState, dataKeys: { ...appState.dataKeys, name: option }})}
                 />
               </TableCell>
             </TableRow>
@@ -229,17 +177,15 @@ function App() {
               <TableCell>
                 <Select
                   options={columns}
-                  value={choroplethDataKeys.values}
+                  value={appState.dataKeys.values}
                   alignSelf="end"
-                  onChange={({ option }) => setChoroplethDataKeys({
-                    ...choroplethDataKeys, values: option,
-                  })}
+                  onChange={({ option }) => setAppState({ ...appState, dataKeys: { ...appState.dataKeys, values: option }})}
                 />
               </TableCell>
             </TableRow>
           </TableBody>
 
-          {choroplethDataKeys.name
+          {appState.dataKeys.name
           && (
             <Card margin="small" pad="small" height="small" width="large" background="white">
               <CardBody pad="xsmall" width="large">
@@ -252,7 +198,7 @@ function App() {
                       &nbsp;your visualization might not be complete.
                       To resolve this issue, please make sure your data
                       &nbsp;matches the country names for&nbsp;
-                      {mapRegion}
+                      {appState.map.region}
                       .&nbsp;
                     </Paragraph>
                   )
@@ -260,7 +206,7 @@ function App() {
                     <Paragraph margin="none">
                       Data looks good! All the entries in your map correspond to the set&nbsp;
                       of country names for&nbsp;
-                      {mapRegion}
+                      {appState.map.region}
                       .&nbsp;
                     </Paragraph>
                   )}
@@ -327,7 +273,7 @@ function App() {
               </TableCell>
               <TableCell>
                 <Select
-                  options={choroplethColorOptions}
+                  options={CHOROPLETH_COLORS}
                   value={choroplethColorScheme}
                   onChange={({ option }) => setChoroplethColorScheme(option)}
                 />
@@ -346,12 +292,12 @@ function App() {
   }
 
   function toggleContinue() {
-    if (currentStep === 0) return appState.map.type === '';
-    if (currentStep === 1) return !userData.ready;
-    if (currentStep === 2) {
-      if (appState.map.type === 'Symbol') return !symbolDataKeys.latitude || !symbolDataKeys.longitude || !symbolDataKeys.sizeValues;
+    if (appState.currentStep === 0) return appState.map.type === '';
+    if (appState.currentStep === 1) return !appState.userData.ready;
+    if (appState.currentStep === 2) {
+      if (appState.map.type === 'Symbol') return !appState.dataKeys.latitude || !appState.dataKeys.longitude || !appState.dataKeys.sizeValues;
 
-      return !choroplethDataKeys.name || !choroplethDataKeys.values;
+      return !appState.dataKeys.name || !appState.dataKeys.values;
     }
 
     return true;
@@ -376,12 +322,12 @@ function App() {
             <Box gridArea="nav">
               <Box direction="row" pad="medium">
                 {
-                  steps
+                  STEPS
                     .map((step, i) => (
                       <StepLabel
                         key={i}
-                        active={i === currentStep}
-                        completed={i < currentStep}
+                        active={i === appState.currentStep}
+                        completed={i < appState.currentStep}
                         text={step}
                         step={i + 1}
                       />
@@ -389,13 +335,13 @@ function App() {
                 }
               </Box>
               <Box pad="medium">
-                { currentStep === 0 && (<MapDetails />) }
-                { currentStep === 1 && (<DataInput />) }
-                { currentStep === 2 && renderRefineStep() }
-                { currentStep === 3 && renderVisualizeStep() }
+                { appState.currentStep === 0 && (<MapDetails />) }
+                { appState.currentStep === 1 && (<DataInput />) }
+                { appState.currentStep === 2 && renderRefineStep() }
+                { appState.currentStep === 3 && renderVisualizeStep() }
 
                 <Box direction="row" justify="between">
-                  <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={currentStep === 0} />
+                  <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
                   <Box direction="row">
                     <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
                     <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
@@ -407,8 +353,6 @@ function App() {
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
                 <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
                 <RenderMap
-                  userData={userData}
-                  dataKeys={appState.map.type && appState.map.type === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
                   choroplethColorScheme={choroplethColorScheme}
                   symbolColorScheme={symbolColorScheme}
                   shape={symbolShape}

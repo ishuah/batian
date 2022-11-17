@@ -2,16 +2,13 @@ type Regions = {
   [key: string]: string
 }
 
-type ChoroplethDataKeys = {
-  name: string
-  values: string
-}
-
-type SymbolDataKeys = {
-  latitude: string
-  longitude: string
-  sizeValues: string
-  colorValues: string
+type IDataKeys = {
+  name?: string
+  values?: string
+  latitude?: string
+  longitude?: string
+  sizeValues?: string
+  colorValues?: string
 }
 
 interface IMap {
@@ -27,5 +24,7 @@ interface IUserData {
 
 interface AppState {
   map: IMap
-  userData: IUserData
+  userData: IUserData,
+  currentStep: number,
+  dataKeys: IDataKeys
 }

@@ -5,8 +5,6 @@ import { recoilState } from '../store';
 import { REGIONS } from '../constants';
 
 type RenderMapProps = {
-  userData: { data: never[], ready: boolean }
-  dataKeys: Record<string, string>
   choroplethColorScheme: string
   symbolColorScheme: string
   shape: string
@@ -77,8 +75,6 @@ function RenderMap(props: RenderMapProps) {
 
   useEffect(() => {
     const {
-      userData,
-      dataKeys,
       choroplethColorScheme,
       symbolColorScheme,
       shape,
@@ -97,15 +93,15 @@ function RenderMap(props: RenderMapProps) {
         .scale(scale)
         .translate(translate);
 
-      if (appState.map.type === 'Choropleth' && dataKeys.name && dataKeys.values) {
-        const values = userData.data.map((row) => {
-          if (row[dataKeys.values] === undefined) return 0;
-          return Number(row[dataKeys.values]);
+      if (appState.map.type === 'Choropleth' && appState.dataKeys.name && appState.dataKeys.values) {
+        const values = appState.userData.data.map((row) => {
+          if (row[appState.dataKeys.values!] === undefined) return 0;
+          return Number(row[appState.dataKeys.values!]);
         });
 
         const regionValue: { [key: string]: number; } = {};
-        userData.data.forEach((row) => {
-          regionValue[row[dataKeys.name]] = Number(row[dataKeys.values]);
+        appState.userData.data.forEach((row) => {
+          regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
         });
 
         const max = Math.max(...values);
@@ -138,11 +134,11 @@ function RenderMap(props: RenderMapProps) {
           .attr('d', path as any);
       }
 
-      if (appState.map.type === 'Symbol' && dataKeys.latitude && dataKeys.longitude) {
-        if (dataKeys.sizeValues) {
-          const values = userData.data.map((row) => {
-            if (row[dataKeys.sizeValues] === undefined) return 0;
-            return Number(row[dataKeys.sizeValues]);
+      if (appState.map.type === 'Symbol' && appState.dataKeys.latitude && appState.dataKeys.longitude) {
+        if (appState.dataKeys.sizeValues) {
+          const values = appState.userData.data.map((row) => {
+            if (row[appState.dataKeys.sizeValues!] === undefined) return 0;
+            return Number(row[appState.dataKeys.sizeValues!]);
           });
 
           const max = Math.max(...values);
@@ -154,11 +150,11 @@ function RenderMap(props: RenderMapProps) {
 
           svg.append('g')
             .selectAll('path')
-            .data(userData.data)
+            .data(appState.userData.data)
             .join('path')
             // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(size(d[dataKeys.sizeValues]))())
+            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
+            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(size(d[appState.dataKeys.sizeValues!]))())
             // .attr('r', (d) => size(d[dataKeys.sizeValues]))
             .attr('fill', symbolColor(symbolColorScheme))
             .attr('opacity', 0.7)
@@ -168,10 +164,10 @@ function RenderMap(props: RenderMapProps) {
         } else {
           svg.append('g')
             .selectAll('path')
-            .data(userData.data)
+            .data(appState.userData.data)
             .join('path')
             // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
+            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
             .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(200)())
             // .attr('r', 5)
             .attr('fill', symbolColor(symbolColorScheme))

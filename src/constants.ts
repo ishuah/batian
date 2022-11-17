@@ -7,7 +7,7 @@ const REGIONS: Regions = {
   'South America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/south-america.geojson',
   'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
 };
-
+const STEPS = ['Map details', 'Load your data', 'Refine', 'Visualize'];
 const CHOROPLETH_COLORS: string[] = ['Reds', 'Blues', 'Greens', 'Cool', 'Warm', 'Spectral'];
 
-export { REGIONS, CHOROPLETH_COLORS };
+export { STEPS, REGIONS, CHOROPLETH_COLORS };
