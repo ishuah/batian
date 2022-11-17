@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { RecoilRoot } from 'recoil';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './pages/App';
 
 ReactDOM.render(
-  <App />,
+  <RecoilRoot>
+    <App />
+  </RecoilRoot>,
   document.getElementById('root'),
 );
 

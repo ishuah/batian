@@ -13,3 +13,13 @@ type SymbolDataKeys = {
   sizeValues: string
   colorValues: string
 }
+
+interface IMap {
+  title: string
+  type: string
+  region: string
+}
+
+interface AppState {
+  map: IMap
+}

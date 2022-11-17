@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import * as d3 from 'd3';
+import { recoilState } from '../store';
+import { REGIONS } from '../constants';
 
 type RenderMapProps = {
-  url: string
-  mapType: string
   userData: { data: never[], ready: boolean }
   dataKeys: Record<string, string>
   choroplethColorScheme: string
@@ -13,6 +14,7 @@ type RenderMapProps = {
 
 // TODO: cleanup this component
 function RenderMap(props: RenderMapProps) {
+  const appState = useRecoilValue<AppState>(recoilState);
   const svg = d3
     .select('#RenderMap')
     .attr('width', 720)
@@ -75,15 +77,15 @@ function RenderMap(props: RenderMapProps) {
 
   useEffect(() => {
     const {
-      url,
       userData,
-      mapType,
       dataKeys,
       choroplethColorScheme,
       symbolColorScheme,
       shape,
     } = props;
     svg.selectAll('*').remove();
+
+    const url = REGIONS[appState.map.region];
 
     const getD3Data = async () => {
       const data = await d3.json(url) as any;
@@ -95,7 +97,7 @@ function RenderMap(props: RenderMapProps) {
         .scale(scale)
         .translate(translate);
 
-      if (mapType === 'Choropleth' && dataKeys.name && dataKeys.values) {
+      if (appState.map.type === 'Choropleth' && dataKeys.name && dataKeys.values) {
         const values = userData.data.map((row) => {
           if (row[dataKeys.values] === undefined) return 0;
           return Number(row[dataKeys.values]);
@@ -136,7 +138,7 @@ function RenderMap(props: RenderMapProps) {
           .attr('d', path as any);
       }
 
-      if (mapType === 'Symbol' && dataKeys.latitude && dataKeys.longitude) {
+      if (appState.map.type === 'Symbol' && dataKeys.latitude && dataKeys.longitude) {
         if (dataKeys.sizeValues) {
           const values = userData.data.map((row) => {
             if (row[dataKeys.sizeValues] === undefined) return 0;
@@ -182,7 +184,7 @@ function RenderMap(props: RenderMapProps) {
     };
 
     getD3Data();
-  }, [props]);
+  }, [props, appState]);
   return (
     <svg id="RenderMap" width="720" height="720" />
   );

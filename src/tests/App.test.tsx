@@ -1,10 +1,14 @@
 import React from 'react';
+import { RecoilRoot } from 'recoil';
 import { render, fireEvent, screen } from '@testing-library/react';
 import App from '../pages/App';
 
 describe('<App />', () => {
   test('renders first step', () => {
-    render(<App />);
+    render(
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>);
     const title = screen.getByText(/What type of map do you want to create?/i);
     expect(title).toBeInTheDocument();
 
@@ -21,7 +25,10 @@ describe('<App />', () => {
   });
 
   test('renders second step', async () => {
-    render(<App />);
+    render(
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>);
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
@@ -36,7 +43,10 @@ describe('<App />', () => {
   });
 
   test('back button', () => {
-    render(<App />);
+    render(
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>);
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
@@ -49,7 +59,10 @@ describe('<App />', () => {
   });
 
   test('cancel button', () => {
-    render(<App />);
+    render(
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>);
 
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));

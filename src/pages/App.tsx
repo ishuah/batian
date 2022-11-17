@@ -1,14 +1,13 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
 import React, { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import Papa from 'papaparse';
 import {
   Grommet, Header, Heading, Main, Box, Grid, Button, Select,
-  RadioButtonGroup,
   Paragraph,
   FileInput,
   DataTable,
-  TextInput,
   Text,
   Card,
   CardBody,
@@ -19,6 +18,8 @@ import {
 
 import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
+import MapDetails from '../components/MapDetails';
+import { recoilState } from '../store';
 
 const CustomTheme = {
   global: {
@@ -29,8 +30,6 @@ const CustomTheme = {
 };
 
 function App() {
-  const [mapTitle, setMapTitle] = useState('');
-  const [mapType, setMapType] = useState('');
   const [mapRegion, setMapRegion] = useState('Africa');
   const steps = ['Map details', 'Load your data', 'Refine', 'Visualize'];
   const [currentStep, setCurrentStep] = useState(0);
@@ -43,6 +42,8 @@ function App() {
   const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
   const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
   const [symbolShape, setSymbolShape] = useState('Circle');
+
+  const appState = useRecoilValue<AppState>(recoilState);
 
   const mapRegions: Regions = {
     Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
@@ -82,8 +83,6 @@ function App() {
 
   function reset() {
     setCurrentStep(0);
-    setMapType('');
-    setMapTitle('');
     setUserData({ data: [], ready: false });
     setChoroplethDataKeys({ name: '', values: '' });
     setSymbolDataKeys({
@@ -124,40 +123,6 @@ function App() {
         columns={columns}
         data={userData.data}
       />
-    );
-  }
-
-  function renderMapDetailsStep() {
-    return (
-      <Box height="large">
-        <Box pad="medium">
-          <Heading level="4">Map details</Heading>
-          <TextInput
-            placeholder="[Map title]"
-            value={mapTitle}
-            onChange={(event) => setMapTitle(event.target.value)}
-          />
-          <Heading level="4">What type of map do you want to create?</Heading>
-          <RadioButtonGroup
-            name="mapType"
-            options={['Choropleth', 'Symbol']}
-            value={mapType}
-            onChange={(event) => {
-              setMapType(event.target.value);
-            }}
-          />
-        </Box>
-        { mapType && (
-          <Box>
-            <Heading level="4">Select map</Heading>
-            <Select
-              options={Object.keys(mapRegions)}
-              value={mapRegion}
-              onChange={({ option }) => setMapRegion(option)}
-            />
-          </Box>
-        )}
-      </Box>
     );
   }
 
@@ -210,7 +175,7 @@ function App() {
   }
 
   function renderDataStep() {
-    if (mapType === 'Symbol') return renderSymbolMapDataInputForm();
+    if (appState.map.type === 'Symbol') return renderSymbolMapDataInputForm();
 
     return renderChoroplethMapDataInputForm();
   }
@@ -362,7 +327,7 @@ function App() {
   }
 
   function renderRefineStep() {
-    if (mapType === 'Symbol') return renderSymbolMapRefineInputForm();
+    if (appState.map.type === 'Symbol') return renderSymbolMapRefineInputForm();
 
     return renderChoroplethMapRefineInputForm();
   }
@@ -428,16 +393,16 @@ function App() {
   }
 
   function renderVisualizeStep() {
-    if (mapType === 'Symbol') return renderSymbolVisualizeStep();
+    if (appState.map.type === 'Symbol') return renderSymbolVisualizeStep();
 
     return renderChoroplethVisualizeStep();
   }
 
   function toggleContinue() {
-    if (currentStep === 0) return mapType === '';
+    if (currentStep === 0) return appState.map.type === '';
     if (currentStep === 1) return !userData.ready;
     if (currentStep === 2) {
-      if (mapType === 'Symbol') return !symbolDataKeys.latitude || !symbolDataKeys.longitude || !symbolDataKeys.sizeValues;
+      if (appState.map.type === 'Symbol') return !symbolDataKeys.latitude || !symbolDataKeys.longitude || !symbolDataKeys.sizeValues;
 
       return !choroplethDataKeys.name || !choroplethDataKeys.values;
     }
@@ -477,7 +442,7 @@ function App() {
                 }
               </Box>
               <Box pad="medium">
-                { currentStep === 0 && renderMapDetailsStep() }
+                { currentStep === 0 && (<MapDetails />) }
                 { currentStep === 1 && renderDataStep() }
                 { currentStep === 2 && renderRefineStep() }
                 { currentStep === 3 && renderVisualizeStep() }
@@ -493,12 +458,10 @@ function App() {
             </Box>
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
-                <Heading level="3" margin="medium">{mapTitle || '[Map Title]'}</Heading>
+                <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
                 <RenderMap
-                  url={mapRegions[mapRegion]}
-                  mapType={mapType}
                   userData={userData}
-                  dataKeys={mapType && mapType === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
+                  dataKeys={appState.map.type && appState.map.type === 'Symbol' ? symbolDataKeys : choroplethDataKeys}
                   choroplethColorScheme={choroplethColorScheme}
                   symbolColorScheme={symbolColorScheme}
                   shape={symbolShape}
