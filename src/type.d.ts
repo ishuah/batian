@@ -26,5 +26,9 @@ interface AppState {
   map: IMap
   userData: IUserData,
   currentStep: number,
-  dataKeys: IDataKeys
+  dataKeys: IDataKeys,
+  mismatchedRegions: number,
+  choroplethColorScheme: string,
+  symbolColorScheme: string,
+  symbolShape: string
 }

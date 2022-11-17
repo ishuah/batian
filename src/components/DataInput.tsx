@@ -36,7 +36,7 @@ function DataInput() {
         </Paragraph>
 
         <FileInput
-          data-testid="choropleth-file-input"
+          data-testid="file-input"
           name="file"
           accept=".csv"
           multiple={false}

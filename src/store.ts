@@ -7,6 +7,10 @@ const initialAppState: AppState = {
   userData: { data: [], ready: false },
   currentStep: 0,
   dataKeys: {},
+  mismatchedRegions: 0,
+  choroplethColorScheme: 'Reds',
+  symbolColorScheme: 'Red',
+  symbolShape: 'Circle',
 };
 
 export const recoilState: RecoilState<AppState> = atom({
