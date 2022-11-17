@@ -20,6 +20,7 @@ import StepLabel from '../components/StepLabel';
 import RenderMap from '../components/RenderMap';
 import MapDetails from '../components/MapDetails';
 import { recoilState } from '../store';
+import DataInput from '../components/DataInput';
 
 const CustomTheme = {
   global: {
@@ -124,60 +125,6 @@ function App() {
         data={userData.data}
       />
     );
-  }
-
-  function renderChoroplethMapDataInputForm() {
-    return (
-      <Box height="xlarge">
-        <Box pad="medium">
-          <Heading level="4">Time to add some data</Heading>
-          <Paragraph margin={{ bottom: 'medium' }} fill>
-            Upload a CSV file containing a column that corresponds to the name of countries in&nbsp;
-            {mapRegion}
-            .
-          </Paragraph>
-
-          <FileInput
-            data-testid="choropleth-file-input"
-            name="file"
-            accept=".csv"
-            multiple={false}
-            onChange={onFileUpload}
-          />
-
-          { userData.ready && renderDataTable() }
-        </Box>
-      </Box>
-    );
-  }
-
-  function renderSymbolMapDataInputForm() {
-    return (
-      <Box height="large">
-        <Box pad="medium">
-          <Heading level="4">Time to add some data</Heading>
-          <Paragraph margin={{ bottom: 'medium' }} fill>
-            Upload a CSV file containing the points you want to map.&nbsp;
-            This file should contain a longitude and a latitude column.
-          </Paragraph>
-
-          <FileInput
-            data-testid="symbol-file-input"
-            name="file"
-            accept=".csv"
-            multiple={false}
-            onChange={onFileUpload}
-          />
-          { userData.ready && renderDataTable() }
-        </Box>
-      </Box>
-    );
-  }
-
-  function renderDataStep() {
-    if (appState.map.type === 'Symbol') return renderSymbolMapDataInputForm();
-
-    return renderChoroplethMapDataInputForm();
   }
 
   function renderSymbolMapRefineInputForm() {
@@ -443,7 +390,7 @@ function App() {
               </Box>
               <Box pad="medium">
                 { currentStep === 0 && (<MapDetails />) }
-                { currentStep === 1 && renderDataStep() }
+                { currentStep === 1 && (<DataInput />) }
                 { currentStep === 2 && renderRefineStep() }
                 { currentStep === 3 && renderVisualizeStep() }
 

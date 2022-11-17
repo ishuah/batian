@@ -16,7 +16,7 @@ describe('<MapDetails />', () => {
 
     expect(screen.getByPlaceholderText(/[Map title]?/i)).toBeInTheDocument();
 
-    const input = screen.getByTestId('map-title') as HTMLInputElement;
+    const input = screen.getByTestId('map-title-input') as HTMLInputElement;
     fireEvent.change(input, {
       target: { value: 'The Sternness of Plates' },
     });

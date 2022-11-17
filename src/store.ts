@@ -4,6 +4,7 @@ import { atom } from 'recoil';
 
 const initialAppState: AppState = {
   map: { title: '', type: '', region: 'Africa' },
+  userData: { data: [], ready: false },
 };
 
 export const recoilState: RecoilState<AppState> = atom({

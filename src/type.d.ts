@@ -20,6 +20,12 @@ interface IMap {
   region: string
 }
 
+interface IUserData {
+  data: never[]
+  ready: boolean
+}
+
 interface AppState {
   map: IMap
+  userData: IUserData
 }

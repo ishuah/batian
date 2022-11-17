@@ -29,7 +29,7 @@ function MapDetails() {
           placeholder="[Map title]"
           value={appState.map.title}
           onChange={(event) => setMapTitle(event.target.value)}
-          data-testid="map-title"
+          data-testid="map-title-input"
         />
         <Heading level="4">What type of map do you want to create?</Heading>
         <RadioButtonGroup
