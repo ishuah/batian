@@ -96,7 +96,10 @@ function RenderMap() {
         const max = Math.max(...values);
         const min = Math.min(...values);
 
-        const color = d3.scaleSequential([min, max], choroplethColor(appState.choroplethColorScheme));
+        const color = d3.scaleSequential(
+          [min, max],
+          choroplethColor(appState.choroplethColorScheme),
+        );
         svg
           .selectAll('path')
           .data(data.features)
@@ -157,7 +160,7 @@ function RenderMap() {
             .join('path')
             // eslint-disable-next-line dot-notation
             .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(appState.symbolShape)).size(200)())
+            .attr('d', () => d3.symbol().type(symbolShape(appState.symbolShape)).size(200)())
             // .attr('r', 5)
             .attr('fill', symbolColor(appState.symbolColorScheme))
             .attr('opacity', 0.5)
