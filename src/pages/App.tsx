@@ -1,11 +1,9 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box, Button,
   Grid, Grommet, Header, Heading, Main,
-  Select, TableBody, TableCell,
-  TableRow, Text,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
 
@@ -13,7 +11,7 @@ import DataInputStep from '../components/DataInputStep';
 import MapDetailStep from '../components/MapDetailStep';
 import RenderMap from '../components/RenderMap';
 import StepLabel from '../components/StepLabel';
-import { CHOROPLETH_COLORS, STEPS } from '../constants';
+import { STEPS } from '../constants';
 import { recoilState } from '../store';
 import MapRefineStep from '../components/MapRefineStep';
 import VisualizeStep from '../components/VisualizeStep';

@@ -1,5 +1,4 @@
 import React from 'react';
-import { RecoilRoot } from 'recoil';
 import { render, screen } from '@testing-library/react';
 import UserDataTable from '../../components/UserDataTable';
 
@@ -7,7 +6,7 @@ describe('<UserDataTable />', () => {
   test('should render <UserDataTable />', () => {
     const data = [{ country: 'string', happy_index: 'number' }] as never[];
     render(
-      <UserDataTable data={data} />
+      <UserDataTable data={data} />,
     );
 
     expect(screen.getByText(/country?/i)).toBeInTheDocument();
