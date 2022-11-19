@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
 
-function MapDetails() {
+function MapDetailStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
   function setMapTitle(title: string) {
@@ -57,4 +57,4 @@ function MapDetails() {
   );
 }
 
-export default MapDetails;
+export default MapDetailStep;

@@ -9,13 +9,14 @@ import {
 } from 'grommet';
 import { useRecoilState } from 'recoil';
 
-import DataInput from '../components/DataInput';
-import MapDetails from '../components/MapDetails';
+import DataInputStep from '../components/DataInputStep';
+import MapDetailStep from '../components/MapDetailStep';
 import RenderMap from '../components/RenderMap';
 import StepLabel from '../components/StepLabel';
 import { CHOROPLETH_COLORS, STEPS } from '../constants';
 import { recoilState } from '../store';
-import MapRefine from '../components/MapRefine';
+import MapRefineStep from '../components/MapRefineStep';
+import VisualizeStep from '../components/VisualizeStep';
 
 const CustomTheme = {
   global: {
@@ -26,14 +27,7 @@ const CustomTheme = {
 };
 
 function App() {
-  const [choroplethColorScheme, setChoroplethColorScheme] = useState('Reds');
-  const [symbolColorScheme, setSymbolColorScheme] = useState('Red');
-  const [symbolShape, setSymbolShape] = useState('Circle');
-
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
-
-  const symbolColorOptions: string[] = ['Red', 'Blue', 'Green', 'Orange'];
-  const symbolShapeOptions: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
 
   function advanceToNext() {
     const currentStep = appState.currentStep + 1;
@@ -56,76 +50,6 @@ function App() {
       symbolColorScheme: 'Red',
       symbolShape: 'Circle',
     });
-
-    setChoroplethColorScheme('Reds');
-    setSymbolColorScheme('Red');
-    setSymbolShape('Circle');
-  }
-
-  function renderSymbolVisualizeStep() {
-    return (
-      <Box height="large">
-        <Box pad="medium">
-          <Heading level={3}>Colors</Heading>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <Text margin="small">Select symbol shape:</Text>
-              </TableCell>
-              <TableCell>
-                <Select
-                  options={symbolShapeOptions}
-                  value={symbolShape}
-                  onChange={({ option }) => setSymbolShape(option)}
-                />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Text margin="small">Select color:</Text>
-              </TableCell>
-              <TableCell>
-                <Select
-                  options={symbolColorOptions}
-                  value={symbolColorScheme}
-                  onChange={({ option }) => setSymbolColorScheme(option)}
-                />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Box>
-      </Box>
-    );
-  }
-
-  function renderChoroplethVisualizeStep() {
-    return (
-      <Box height="large">
-        <Box pad="medium">
-          <Heading level={3}>Colors</Heading>
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <Text margin="small">Select palette:</Text>
-              </TableCell>
-              <TableCell>
-                <Select
-                  options={CHOROPLETH_COLORS}
-                  value={choroplethColorScheme}
-                  onChange={({ option }) => setChoroplethColorScheme(option)}
-                />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Box>
-      </Box>
-    );
-  }
-
-  function renderVisualizeStep() {
-    if (appState.map.type === 'Symbol') return renderSymbolVisualizeStep();
-
-    return renderChoroplethVisualizeStep();
   }
 
   function toggleContinue() {
@@ -172,10 +96,10 @@ function App() {
                 }
               </Box>
               <Box pad="medium">
-                { appState.currentStep === 0 && (<MapDetails />) }
-                { appState.currentStep === 1 && (<DataInput />) }
-                { appState.currentStep === 2 && (<MapRefine />) }
-                { appState.currentStep === 3 && renderVisualizeStep() }
+                { appState.currentStep === 0 && (<MapDetailStep />) }
+                { appState.currentStep === 1 && (<DataInputStep />) }
+                { appState.currentStep === 2 && (<MapRefineStep />) }
+                { appState.currentStep === 3 && (<VisualizeStep />) }
 
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
@@ -189,11 +113,7 @@ function App() {
             <Box gridArea="main" height="large">
               <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
                 <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
-                <RenderMap
-                  choroplethColorScheme={choroplethColorScheme}
-                  symbolColorScheme={symbolColorScheme}
-                  shape={symbolShape}
-                />
+                <RenderMap />
               </Box>
             </Box>
           </Grid>

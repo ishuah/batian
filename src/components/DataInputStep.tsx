@@ -8,7 +8,7 @@ import { useRecoilState } from 'recoil';
 import { recoilState } from '../store';
 import UserDataTable from './UserDataTable';
 
-function DataInput() {
+function DataInputStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const choroplethCopy = `Upload a CSV file containing a column that corresponds to the name of countries in ${appState.map.region}.`;
   const symbolCopy = ` Upload a CSV file containing the points you want to map.
@@ -49,4 +49,4 @@ function DataInput() {
   );
 }
 
-export default DataInput;
+export default DataInputStep;

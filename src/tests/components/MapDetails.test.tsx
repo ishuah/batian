@@ -1,13 +1,13 @@
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { render, fireEvent, screen } from '@testing-library/react';
-import MapDetails from '../../components/MapDetails';
+import MapDetailStep from '../../components/MapDetailStep';
 
 describe('<MapDetails />', () => {
   test('should render <MapDetails />', () => {
     render(
       <RecoilRoot>
-        <MapDetails />
+        <MapDetailStep />
       </RecoilRoot>,
     );
 

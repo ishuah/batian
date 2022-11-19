@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
 
-function MapRefine() {
+function MapRefineStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const columns = Object.keys(appState.userData.data[0]).map((header) => header);
 
@@ -16,7 +16,8 @@ function MapRefine() {
     fetch(REGIONS[appState.map.region])
       .then((response) => response.json())
       .then((geojson) => {
-        const userDataRegions: string[] = appState.userData.data.map((row) => row[appState.dataKeys.name!]);
+        const userDataRegions: string[] = appState
+          .userData.data.map((row) => row[appState.dataKeys.name!]);
         const regions: string[] = geojson.features.map((x: any) => x.properties.name);
         const mismatchedRegions = userDataRegions.filter(
           (region) => !regions.includes(region),
@@ -186,4 +187,4 @@ function MapRefine() {
   );
 }
 
-export default MapRefine;
+export default MapRefineStep;

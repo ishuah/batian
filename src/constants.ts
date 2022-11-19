@@ -9,5 +9,9 @@ const REGIONS: Regions = {
 };
 const STEPS = ['Map details', 'Load your data', 'Refine', 'Visualize'];
 const CHOROPLETH_COLORS: string[] = ['Reds', 'Blues', 'Greens', 'Cool', 'Warm', 'Spectral'];
+const SYMBOL_COLORS: string[] = ['Red', 'Blue', 'Green', 'Orange'];
+const SYMBOLS: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
 
-export { STEPS, REGIONS, CHOROPLETH_COLORS };
+export {
+  STEPS, REGIONS, CHOROPLETH_COLORS, SYMBOL_COLORS, SYMBOLS,
+};
