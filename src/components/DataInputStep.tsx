@@ -43,7 +43,7 @@ function DataInputStep() {
           onChange={onFileUpload}
         />
 
-        { appState.userData.ready && <UserDataTable /> }
+        { appState.userData.ready && <UserDataTable data={appState.userData.data} /> }
       </Box>
     </Box>
   );

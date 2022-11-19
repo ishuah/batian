@@ -1,12 +1,13 @@
 import React from 'react';
-import { useRecoilValue } from 'recoil';
 import { DataTable } from 'grommet';
-import { recoilState } from '../store';
 
-function UserDataTable() {
-  const appState = useRecoilValue<AppState>(recoilState);
-  const columns = Object.keys(appState
-    .userData.data[0]).map((header) => ({ property: header, header }));
+type UserDataTableProps = {
+  data: never[]
+}
+
+function UserDataTable(props: UserDataTableProps) {
+  const { data } = props;
+  const columns = Object.keys(data[0]).map((header) => ({ property: header, header }));
 
   return (
     <DataTable
@@ -16,7 +17,7 @@ function UserDataTable() {
       background="white"
       border
       columns={columns}
-      data={appState.userData.data}
+      data={data}
     />
   );
 }
