@@ -1,18 +1,12 @@
 import React, { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import * as d3 from 'd3';
-
-type RenderMapProps = {
-  url: string
-  mapType: string
-  userData: { data: never[], ready: boolean }
-  dataKeys: Record<string, string>
-  choroplethColorScheme: string
-  symbolColorScheme: string
-  shape: string
-}
+import { recoilState } from '../store';
+import { REGIONS } from '../constants';
 
 // TODO: cleanup this component
-function RenderMap(props: RenderMapProps) {
+function RenderMap() {
+  const appState = useRecoilValue<AppState>(recoilState);
   const svg = d3
     .select('#RenderMap')
     .attr('width', 720)
@@ -74,16 +68,9 @@ function RenderMap(props: RenderMapProps) {
   };
 
   useEffect(() => {
-    const {
-      url,
-      userData,
-      mapType,
-      dataKeys,
-      choroplethColorScheme,
-      symbolColorScheme,
-      shape,
-    } = props;
     svg.selectAll('*').remove();
+
+    const url = REGIONS[appState.map.region];
 
     const getD3Data = async () => {
       const data = await d3.json(url) as any;
@@ -95,21 +82,24 @@ function RenderMap(props: RenderMapProps) {
         .scale(scale)
         .translate(translate);
 
-      if (mapType === 'Choropleth' && dataKeys.name && dataKeys.values) {
-        const values = userData.data.map((row) => {
-          if (row[dataKeys.values] === undefined) return 0;
-          return Number(row[dataKeys.values]);
+      if (appState.map.type === 'Choropleth' && appState.dataKeys.name && appState.dataKeys.values) {
+        const values = appState.userData.data.map((row) => {
+          if (row[appState.dataKeys.values!] === undefined) return 0;
+          return Number(row[appState.dataKeys.values!]);
         });
 
         const regionValue: { [key: string]: number; } = {};
-        userData.data.forEach((row) => {
-          regionValue[row[dataKeys.name]] = Number(row[dataKeys.values]);
+        appState.userData.data.forEach((row) => {
+          regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
         });
 
         const max = Math.max(...values);
         const min = Math.min(...values);
 
-        const color = d3.scaleSequential([min, max], choroplethColor(choroplethColorScheme));
+        const color = d3.scaleSequential(
+          [min, max],
+          choroplethColor(appState.choroplethColorScheme),
+        );
         svg
           .selectAll('path')
           .data(data.features)
@@ -136,11 +126,11 @@ function RenderMap(props: RenderMapProps) {
           .attr('d', path as any);
       }
 
-      if (mapType === 'Symbol' && dataKeys.latitude && dataKeys.longitude) {
-        if (dataKeys.sizeValues) {
-          const values = userData.data.map((row) => {
-            if (row[dataKeys.sizeValues] === undefined) return 0;
-            return Number(row[dataKeys.sizeValues]);
+      if (appState.map.type === 'Symbol' && appState.dataKeys.latitude && appState.dataKeys.longitude) {
+        if (appState.dataKeys.sizeValues) {
+          const values = appState.userData.data.map((row) => {
+            if (row[appState.dataKeys.sizeValues!] === undefined) return 0;
+            return Number(row[appState.dataKeys.sizeValues!]);
           });
 
           const max = Math.max(...values);
@@ -152,13 +142,13 @@ function RenderMap(props: RenderMapProps) {
 
           svg.append('g')
             .selectAll('path')
-            .data(userData.data)
+            .data(appState.userData.data)
             .join('path')
             // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(size(d[dataKeys.sizeValues]))())
+            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
+            .attr('d', (d) => d3.symbol().type(symbolShape(appState.symbolShape)).size(size(d[appState.dataKeys.sizeValues!]))())
             // .attr('r', (d) => size(d[dataKeys.sizeValues]))
-            .attr('fill', symbolColor(symbolColorScheme))
+            .attr('fill', symbolColor(appState.symbolColorScheme))
             .attr('opacity', 0.7)
             .append('title')
             // eslint-disable-next-line dot-notation
@@ -166,13 +156,13 @@ function RenderMap(props: RenderMapProps) {
         } else {
           svg.append('g')
             .selectAll('path')
-            .data(userData.data)
+            .data(appState.userData.data)
             .join('path')
             // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[dataKeys.longitude], d[dataKeys.latitude]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(shape)).size(200)())
+            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
+            .attr('d', () => d3.symbol().type(symbolShape(appState.symbolShape)).size(200)())
             // .attr('r', 5)
-            .attr('fill', symbolColor(symbolColorScheme))
+            .attr('fill', symbolColor(appState.symbolColorScheme))
             .attr('opacity', 0.5)
             .append('title')
             // eslint-disable-next-line dot-notation
@@ -182,7 +172,7 @@ function RenderMap(props: RenderMapProps) {
     };
 
     getD3Data();
-  }, [props]);
+  }, [appState]);
   return (
     <svg id="RenderMap" width="720" height="720" />
   );
