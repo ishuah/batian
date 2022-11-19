@@ -3,8 +3,8 @@ import { RecoilRoot } from 'recoil';
 import { render, fireEvent, screen } from '@testing-library/react';
 import MapDetailStep from '../../components/MapDetailStep';
 
-describe('<MapDetails />', () => {
-  test('should render <MapDetails />', () => {
+describe('<MapDetailStep />', () => {
+  test('should render <MapDetailStep />', () => {
     render(
       <RecoilRoot>
         <MapDetailStep />

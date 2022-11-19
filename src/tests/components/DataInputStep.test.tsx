@@ -1,10 +1,10 @@
 import React from 'react';
 import { RecoilRoot } from 'recoil';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import DataInputStep from '../../components/DataInputStep';
 
-describe('<DataInput />', () => {
-  test('should render <DataInput />', () => {
+describe('<DataInputStep />', () => {
+  test('should render <DataInputStep />', () => {
     render(
       <RecoilRoot>
         <DataInputStep />
