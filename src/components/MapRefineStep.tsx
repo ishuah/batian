@@ -9,7 +9,8 @@ import { recoilState } from '../store';
 
 function MapRefineStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
-  const columns = Object.keys(appState.userData.data[0]).map((header) => header);
+  const columns = appState.userData.data.length > 0
+    ? Object.keys(appState.userData.data[0]).map((header) => header) : [];
 
   useEffect(() => {
     if (!appState.dataKeys.name) return;
