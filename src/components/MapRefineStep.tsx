@@ -1,6 +1,6 @@
 import {
   Box, Heading, TableBody, TableRow, TableCell,
-  Select, Text, Card, CardBody, Paragraph, Table,
+  Select, Text, Notification, Table,
 } from 'grommet';
 import React, { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
@@ -158,32 +158,17 @@ function MapRefineStep() {
         </Table>
         {appState.dataKeys.name
           && (
-            <Card margin="small" pad="small" height="small" width="large" background="white">
-              <CardBody pad="xsmall" width="large">
-                { (appState.mismatchedRegions > 0)
-                  ? (
-                    <Paragraph margin="none">
-                      We couldn&#39;t match&nbsp;
-                      {appState.mismatchedRegions}
-                      &nbsp;entries from your file,
-                      &nbsp;your visualization might not be complete.
-                      To resolve this issue, please make sure your data
-                      &nbsp;matches the country names for&nbsp;
-                      {appState.map.region}
-                      .&nbsp;
-                    </Paragraph>
-                  )
-                  : (
-                    <Paragraph margin="none">
-                      Data looks good! All the entries in your map correspond to the set&nbsp;
-                      of country names for&nbsp;
-                      {appState.map.region}
-                      .&nbsp;
-                    </Paragraph>
-                  )}
-                {}
-              </CardBody>
-            </Card>
+            <Box margin="small" pad="small">
+              <Notification
+                status={appState.mismatchedRegions > 0 ? 'warning' : 'normal'}
+                title={appState.mismatchedRegions > 0 ? 'Data mismatch detected' : 'Data looks good!'}
+                message={appState.mismatchedRegions > 0
+                  ? `We couldn't match ${appState.mismatchedRegions} entries from your file,
+                  your visualization might not be complete. To resolve this issue, please
+                  make sure your data matches the country names for ${appState.map.region}`
+                  : `All the entries in your map correspond to the set of countries for ${appState.map.region}`}
+              />
+            </Box>
           )}
       </Box>
     </Box>
