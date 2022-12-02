@@ -4,12 +4,15 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import App from '../pages/App';
 
 describe('<App />', () => {
-  test('renders first step', () => {
+  beforeEach(() => {
     render(
       <RecoilRoot>
         <App />
       </RecoilRoot>,
     );
+  });
+
+  test('renders first step', () => {
     const title = screen.getByText(/What type of map do you want to create?/i);
     expect(title).toBeInTheDocument();
 
@@ -25,13 +28,7 @@ describe('<App />', () => {
     expect(backButton).toBeDisabled();
   });
 
-  test('renders second step', async () => {
-    render(
-      <RecoilRoot>
-        <App />
-      </RecoilRoot>,
-    );
-
+  test('renders second step', () => {
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
 
@@ -45,12 +42,6 @@ describe('<App />', () => {
   });
 
   test('back button', () => {
-    render(
-      <RecoilRoot>
-        <App />
-      </RecoilRoot>,
-    );
-
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
 
@@ -62,12 +53,6 @@ describe('<App />', () => {
   });
 
   test('cancel button', () => {
-    render(
-      <RecoilRoot>
-        <App />
-      </RecoilRoot>,
-    );
-
     fireEvent.click(screen.getByText('Choropleth'));
     fireEvent.click(screen.getByText(/Continue/i));
 
