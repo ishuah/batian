@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 import {
-  Box, Heading, Paragraph, FileInput,
+  Box, Heading, Paragraph, FileInput, Notification,
 } from 'grommet';
 import Papa from 'papaparse';
 import React from 'react';
@@ -18,10 +18,27 @@ function DataInputStep() {
     const fileList = event.target.files;
     if (fileList && fileList.length === 1) {
       const file = fileList[0];
+      if (file.type !== 'text/csv') {
+        setAppState({ ...appState, userData: { ...appState.userData, errors: [`${file.type} is not supported.`] } });
+        return;
+      }
+
       Papa.parse(file, {
         header: true,
         complete(results) {
-          setAppState({ ...appState, userData: { data: results.data as [], ready: true } });
+          if (results.data.length === 0) {
+            setAppState({ ...appState, userData: { ...appState.userData, errors: [`We couldn't load any data from ${file.name}.`] } });
+            return;
+          }
+
+          setAppState({
+            ...appState,
+            userData: {
+              data: results.data as [],
+              errors: results.errors.map((error) => error.message),
+              ready: true,
+            },
+          });
         },
       });
     }
@@ -42,7 +59,16 @@ function DataInputStep() {
           multiple={false}
           onChange={onFileUpload}
         />
-
+        { appState.userData.errors.length > 0
+          && (
+            <Box margin="small" pad="small">
+              <Notification
+                status="critical"
+                title="Data error"
+                message={appState.userData.errors.toString()}
+              />
+            </Box>
+          ) }
         { appState.userData.ready && <UserDataTable data={appState.userData.data} /> }
       </Box>
     </Box>

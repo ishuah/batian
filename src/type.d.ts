@@ -20,6 +20,7 @@ interface IMap {
 interface IUserData {
   data: never[]
   ready: boolean
+  errors: string[]
 }
 
 interface AppState {

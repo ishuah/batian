@@ -4,7 +4,7 @@ import { atom } from 'recoil';
 
 const initialAppState: AppState = {
   map: { title: '', type: '', region: 'Africa' },
-  userData: { data: [], ready: false },
+  userData: { data: [], errors: [], ready: false },
   currentStep: 0,
   dataKeys: {},
   mismatchedRegions: 0,
