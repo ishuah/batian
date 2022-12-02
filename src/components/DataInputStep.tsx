@@ -14,7 +14,7 @@ function DataInputStep() {
   const symbolCopy = ` Upload a CSV file containing the points you want to map.
   This file should contain a longitude and a latitude column.`;
 
-  async function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const fileList = event.target.files;
     if (fileList && fileList.length === 1) {
       const file = fileList[0];
