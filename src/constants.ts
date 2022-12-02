@@ -1,11 +1,11 @@
 const REGIONS: Regions = {
-  Africa: `${process.env.PUBLIC_URL}/geojson/africa.geojson`,
-  Asia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/asia.geojson',
-  Australia: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/australia.geojson',
-  Europe: 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/europe.geojson',
-  'North America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/north-america.geojson',
-  'South America': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/south-america.geojson',
-  'South East Asia': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/southeast-asia.geojson',
+  World: `${process.env.PUBLIC_URL}/geojson/world.geo.json`,
+  Africa: `${process.env.PUBLIC_URL}/geojson/africa.geo.json`,
+  Asia: `${process.env.PUBLIC_URL}/geojson/asia.geo.json`,
+  Europe: `${process.env.PUBLIC_URL}/geojson/europe.geo.json`,
+  'North America': `${process.env.PUBLIC_URL}/geojson/north.america.geo.json`,
+  'South America': `${process.env.PUBLIC_URL}/geojson/south.america.geo.json`,
+  Ocenia: `${process.env.PUBLIC_URL}/geojson/oceania.geo.json`,
 };
 const STEPS = ['Map details', 'Load your data', 'Refine', 'Visualize'];
 const CHOROPLETH_COLORS: string[] = ['Reds', 'Blues', 'Greens', 'Cool', 'Warm', 'Spectral'];
