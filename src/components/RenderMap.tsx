@@ -7,10 +7,6 @@ import { REGIONS } from '../constants';
 // TODO: cleanup this component
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
-  const svg = d3
-    .select('#RenderMap')
-    .attr('width', 720)
-    .attr('height', 720);
 
   const projection = d3
     .geoMercator()
@@ -67,7 +63,51 @@ function RenderMap() {
     }
   };
 
+  const getDataRange = (key: string): number[] => {
+    const values = appState.userData.data.map((row) => {
+      if (row[key] === undefined) return 0;
+      return Number(row[key]);
+    });
+
+    return [Math.min(...values), Math.max(...values)];
+  };
+
+  const baseLayerFill = (d: any) => {
+    const regionValue: { [key: string]: number; } = {};
+    appState.userData.data.forEach((row) => {
+      regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
+    });
+
+    const [min, max] = getDataRange(appState.dataKeys.values!);
+    const color = d3.scaleSequential(
+      [min, max],
+      choroplethColor(appState.choroplethColorScheme),
+    );
+    if (regionValue[d.properties.name]) return color(regionValue[d.properties.name]);
+    return '#c9d1da';
+  };
+
+  const symbolShapeAndSize = (d: any) => {
+    if (appState.dataKeys.sizeValues) {
+      const [min, max] = getDataRange(appState.dataKeys.sizeValues!);
+      const size = d3.scaleSequential()
+        .domain([min, max])
+        .range([200, 2000]);
+      return d3.symbol()
+        .type(symbolShape(appState.symbolShape))
+        .size(size(d[appState.dataKeys.sizeValues!]))();
+    }
+
+    return d3.symbol()
+      .type(symbolShape(appState.symbolShape))
+      .size(200)();
+  };
+
   useEffect(() => {
+    const svg = d3
+      .select('#RenderMap')
+      .attr('width', 720)
+      .attr('height', 720);
     svg.selectAll('*').remove();
 
     const url = REGIONS[appState.map.region];
@@ -82,97 +122,34 @@ function RenderMap() {
         .scale(scale)
         .translate(translate);
 
-      if (appState.map.type === 'Choropleth' && appState.dataKeys.name && appState.dataKeys.values) {
-        const values = appState.userData.data.map((row) => {
-          if (row[appState.dataKeys.values!] === undefined) return 0;
-          return Number(row[appState.dataKeys.values!]);
-        });
+      // Render base layer (country shapes)
+      svg
+        .selectAll('path')
+        .data(data.features)
+        .enter()
+        .append('path')
+        .attr('class', 'country')
+        .attr('fill', baseLayerFill)
+        .attr('stroke', 'white')
+        .attr('stroke-width', 0.5)
+        .attr('d', path as any);
 
-        const regionValue: { [key: string]: number; } = {};
-        appState.userData.data.forEach((row) => {
-          regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
-        });
-
-        const max = Math.max(...values);
-        const min = Math.min(...values);
-
-        const color = d3.scaleSequential(
-          [min, max],
-          choroplethColor(appState.choroplethColorScheme),
-        );
-        svg
+      // Render symbols
+      if (appState.dataKeys.latitude && appState.dataKeys.longitude) {
+        svg.append('g')
           .selectAll('path')
-          .data(data.features)
-          .enter()
-          .append('path')
-          .attr('class', 'country')
-          .attr('fill', (d: any) => {
-            if (regionValue[d.properties.name]) return color(regionValue[d.properties.name]);
-            return '#c9d1da';
-          })
-          .attr('stroke', 'white')
-          .attr('stroke-width', 0.5)
-          .attr('d', path as any);
-      } else {
-        svg
-          .selectAll('path')
-          .data(data.features)
-          .enter()
-          .append('path')
-          .attr('class', 'country')
-          .attr('fill', '#c9d1da')
-          .attr('stroke', 'white')
-          .attr('stroke-width', 0.5)
-          .attr('d', path as any);
-      }
-
-      if (appState.map.type === 'Symbol' && appState.dataKeys.latitude && appState.dataKeys.longitude) {
-        if (appState.dataKeys.sizeValues) {
-          const values = appState.userData.data.map((row) => {
-            if (row[appState.dataKeys.sizeValues!] === undefined) return 0;
-            return Number(row[appState.dataKeys.sizeValues!]);
-          });
-
-          const max = Math.max(...values);
-          const min = Math.min(...values);
-
-          const size = d3.scaleSequential()
-            .domain([min, max])
-            .range([200, 2000]);
-
-          svg.append('g')
-            .selectAll('path')
-            .data(appState.userData.data)
-            .join('path')
-            // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
-            .attr('d', (d) => d3.symbol().type(symbolShape(appState.symbolShape)).size(size(d[appState.dataKeys.sizeValues!]))())
-            // .attr('r', (d) => size(d[dataKeys.sizeValues]))
-            .attr('fill', symbolColor(appState.symbolColorScheme))
-            .attr('opacity', 0.7)
-            .append('title')
-            // eslint-disable-next-line dot-notation
-            .text((d) => d['Title']);
-        } else {
-          svg.append('g')
-            .selectAll('path')
-            .data(appState.userData.data)
-            .join('path')
-            // eslint-disable-next-line dot-notation
-            .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
-            .attr('d', () => d3.symbol().type(symbolShape(appState.symbolShape)).size(200)())
-            // .attr('r', 5)
-            .attr('fill', symbolColor(appState.symbolColorScheme))
-            .attr('opacity', 0.5)
-            .append('title')
-            // eslint-disable-next-line dot-notation
-            .text((d) => d['Title']);
-        }
+          .data(appState.userData.data)
+          .join('path')
+          // eslint-disable-next-line dot-notation
+          .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
+          .attr('d', symbolShapeAndSize)
+          .attr('fill', symbolColor(appState.symbolColorScheme))
+          .attr('opacity', 0.7);
       }
     };
 
     getD3Data();
-  }, [appState]);
+  });
   return (
     <svg id="RenderMap" width="720" height="720" />
   );
