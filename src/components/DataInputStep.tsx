@@ -41,7 +41,7 @@ function DataInputStep() {
         },
       });
     }
-  }, []);
+  }, [appState]);
 
   return (
     <Box height="xlarge">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Button,
   Card,
@@ -15,6 +15,7 @@ import {
   TableRow,
   TextInput,
   Box,
+  KeyPress,
 } from 'grommet';
 
 type UserDataTableProps = {
@@ -50,11 +51,26 @@ function UserDataTable(props: UserDataTableProps) {
       ),
     }));
 
-  const onClickRow = (event: MouseClick<any>) => {
-    setActiveRow(event.datum);
-    setActiveRowIndex(event.index);
+  const closeModal = useCallback(() => {
+    setShow(false);
+  }, [show]);
+
+  const onClickRow = useCallback((event: MouseClick<any> | KeyPress<any>) => {
+    const click = event as MouseClick<any>;
+    setActiveRow(click.datum);
+    setActiveRowIndex(click.index);
     setShow(true);
-  };
+  }, [activeRow, activeRowIndex, show]);
+
+  const deleteRow = useCallback(() => {
+    if (activeRowIndex) onDeleteRow(activeRowIndex!);
+    setShow(false);
+  }, [activeRowIndex, show]);
+
+  const updateRow = useCallback(() => {
+    if (activeRowIndex) onUpdateRow(activeRow, activeRowIndex);
+    setShow(false);
+  }, [activeRow, activeRowIndex, show]);
 
   return (
     <>
@@ -66,12 +82,12 @@ function UserDataTable(props: UserDataTableProps) {
         fill="horizontal"
         columns={columns}
         data={data}
-        onClickRow={(event) => onClickRow(event as MouseClick<any>)}
+        onClickRow={onClickRow}
       />
       {show && activeRow && (
         <Layer
-          onEsc={() => setShow(false)}
-          onClickOutside={() => setShow(false)}
+          onEsc={closeModal}
+          onClickOutside={closeModal}
         >
           <Card height="medium" width="medium" background="light-1">
             <CardHeader pad="small">Edit Row</CardHeader>
@@ -105,23 +121,17 @@ function UserDataTable(props: UserDataTableProps) {
               </Table>
             </CardBody>
             <CardFooter pad="small" background="light-2">
-              <Button label="Cancel" onClick={() => setShow(false)} />
+              <Button label="Cancel" onClick={closeModal} />
               <Box direction="row" gap="xsmall">
                 <Button
                   label="Delete"
                   color="red"
-                  onClick={() => {
-                    onDeleteRow(activeRowIndex!);
-                    setShow(false);
-                  }}
+                  onClick={deleteRow}
                 />
                 <Button
                   label="Save"
                   primary
-                  onClick={() => {
-                    onUpdateRow(activeRow, activeRowIndex!);
-                    setShow(false);
-                  }}
+                  onClick={updateRow}
                 />
               </Box>
             </CardFooter>

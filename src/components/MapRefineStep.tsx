@@ -17,21 +17,21 @@ function MapRefineStep() {
       ...appState,
       dataKeys: { ...appState.dataKeys, latitude: event.option },
     });
-  }, [appState.dataKeys]);
+  }, [appState]);
 
   const setLongitude = useCallback((event: any) => {
     setAppState({
       ...appState,
       dataKeys: { ...appState.dataKeys, longitude: event.option },
     });
-  }, [appState.dataKeys]);
+  }, [appState]);
 
   const setSizeValues = useCallback((event: any) => {
     setAppState({
       ...appState,
       dataKeys: { ...appState.dataKeys, sizeValues: event.option },
     });
-  }, [appState.dataKeys]);
+  }, [appState]);
 
   const setColorValues = useCallback((event: any) => {
     setAppState({
@@ -45,14 +45,14 @@ function MapRefineStep() {
       ...appState,
       dataKeys: { ...appState.dataKeys, name: event.option },
     });
-  }, [appState.dataKeys]);
+  }, [appState]);
 
   const setValueKey = useCallback((event: any) => {
     setAppState({
       ...appState,
       dataKeys: { ...appState.dataKeys, values: event.option },
     });
-  }, [appState.dataKeys]);
+  }, [appState]);
 
   useEffect(() => {
     if (!appState.dataKeys.name) return;
