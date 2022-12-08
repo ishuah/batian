@@ -160,7 +160,7 @@ function App() {
                 </Box>
               </Box>
             </Box>
-            <Box gridArea="main" height="large">
+            <Box gridArea="main" height="large" overflow="auto">
               {focusArea()}
             </Box>
           </Grid>
