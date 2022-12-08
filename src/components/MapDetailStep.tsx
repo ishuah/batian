@@ -1,7 +1,7 @@
 import {
   Box, Heading, TextInput, RadioButtonGroup, Select,
 } from 'grommet';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
@@ -9,17 +9,17 @@ import { recoilState } from '../store';
 function MapDetailStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
-  function setMapTitle(title: string) {
-    setAppState({ ...appState, map: { ...appState.map, title } });
-  }
+  const setMapTitle = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setAppState({ ...appState, map: { ...appState.map, title: event.target.value } });
+  }, [appState.map]);
 
-  function setMapType(mapType: string) {
-    setAppState({ ...appState, map: { ...appState.map, type: mapType } });
-  }
+  const setMapType = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setAppState({ ...appState, map: { ...appState.map, type: event.target.value } });
+  }, [appState.map]);
 
-  function setRegion(region: string) {
-    setAppState({ ...appState, map: { ...appState.map, region } });
-  }
+  const setRegion = useCallback((event: any) => {
+    setAppState({ ...appState, map: { ...appState.map, region: event.option } });
+  }, [appState.map]);
 
   return (
     <Box height="large">
@@ -28,7 +28,7 @@ function MapDetailStep() {
         <TextInput
           placeholder="[Map title]"
           value={appState.map.title}
-          onChange={(event) => setMapTitle(event.target.value)}
+          onChange={setMapTitle}
           data-testid="map-title-input"
         />
         <Heading level="4">What type of map do you want to create?</Heading>
@@ -36,9 +36,7 @@ function MapDetailStep() {
           name="mapType"
           options={['Choropleth', 'Symbol']}
           value={appState.map.type}
-          onChange={(event) => {
-            setMapType(event.target.value);
-          }}
+          onChange={setMapType}
           data-testid="map-type"
         />
       </Box>
@@ -48,7 +46,7 @@ function MapDetailStep() {
           <Select
             options={Object.keys(REGIONS)}
             value={appState.map.region}
-            onChange={({ option }) => setRegion(option)}
+            onChange={setRegion}
             data-testid="map-region"
           />
         </Box>
