@@ -3,7 +3,7 @@ import {
   Box, Heading, Paragraph, FileInput, Notification,
 } from 'grommet';
 import Papa from 'papaparse';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { recoilState } from '../store';
 
@@ -13,7 +13,7 @@ function DataInputStep() {
   const symbolCopy = ` Upload a CSV file containing the points you want to map.
   This file should contain a longitude and a latitude column.`;
 
-  function onFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
+  const onFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
     if (fileList && fileList.length === 1) {
       const file = fileList[0];
@@ -41,7 +41,7 @@ function DataInputStep() {
         },
       });
     }
-  }
+  }, []);
 
   return (
     <Box height="xlarge">
