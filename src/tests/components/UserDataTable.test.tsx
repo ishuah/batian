@@ -1,5 +1,10 @@
 import React from 'react';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 import UserDataTable from '../../components/UserDataTable';
 
 describe('<UserDataTable />', () => {
