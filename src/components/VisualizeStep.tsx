@@ -2,7 +2,7 @@ import {
   Box, Heading, TableBody, TableRow,
   TableCell, Text, Select, Table,
 } from 'grommet';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 import { CHOROPLETH_COLORS, SYMBOLS, SYMBOL_COLORS } from '../constants';
 import { recoilState } from '../store';
@@ -10,6 +10,17 @@ import { recoilState } from '../store';
 function VisualizeStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
+  const setSymbolShape = useCallback((event: any) => {
+    setAppState({ ...appState, symbolShape: event.option });
+  }, [appState]);
+
+  const setSymbolColor = useCallback((event: any) => {
+    setAppState({ ...appState, symbolColorScheme: event.option });
+  }, [appState]);
+
+  const setChoroplethColorScheme = useCallback((event: any) => {
+    setAppState({ ...appState, choroplethColorScheme: event.option });
+  }, [appState]);
   return (
     <Box height="large">
       <Box pad="medium">
@@ -27,7 +38,7 @@ function VisualizeStep() {
                       <Select
                         options={SYMBOLS}
                         value={appState.symbolShape}
-                        onChange={({ option }) => setAppState({ ...appState, symbolShape: option })}
+                        onChange={setSymbolShape}
                       />
                     </TableCell>
                   </TableRow>
@@ -39,9 +50,7 @@ function VisualizeStep() {
                       <Select
                         options={SYMBOL_COLORS}
                         value={appState.symbolColorScheme}
-                        onChange={({ option }) => {
-                          setAppState({ ...appState, symbolColorScheme: option });
-                        }}
+                        onChange={setSymbolColor}
                       />
                     </TableCell>
                   </TableRow>
@@ -56,9 +65,7 @@ function VisualizeStep() {
                     <Select
                       options={CHOROPLETH_COLORS}
                       value={appState.choroplethColorScheme}
-                      onChange={({ option }) => {
-                        setAppState({ ...appState, choroplethColorScheme: option });
-                      }}
+                      onChange={setChoroplethColorScheme}
                     />
                   </TableCell>
                 </TableRow>

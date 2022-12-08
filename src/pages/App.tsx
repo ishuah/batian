@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   Box, Button,
   Grid, Grommet, Header, Heading, Main,
@@ -28,17 +28,17 @@ const CustomTheme = {
 function App() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
-  function advanceToNext() {
+  const advanceToNext = useCallback(() => {
     const currentStep = appState.currentStep + 1;
     setAppState({ ...appState, currentStep });
-  }
+  }, [appState]);
 
-  function revertToLast() {
+  const revertToLast = useCallback(() => {
     const currentStep = appState.currentStep - 1;
     setAppState({ ...appState, currentStep });
-  }
+  }, [appState]);
 
-  function reset() {
+  const reset = useCallback(() => {
     setAppState({
       map: { title: '', type: '', region: 'Africa' },
       userData: { data: [], errors: [], ready: false },
@@ -50,7 +50,7 @@ function App() {
       symbolColorScheme: 'Red',
       symbolShape: 'Circle',
     });
-  }
+  }, [appState]);
 
   function toggleContinue() {
     if (appState.currentStep === 0) return appState.map.type === '';
@@ -64,7 +64,7 @@ function App() {
     return true;
   }
 
-  function onUpdateRow(updatedRow: any, index: number) {
+  const onUpdateRow = useCallback((updatedRow: any, index: number) => {
     const data = [
       ...appState.userData.data.slice(0, index),
       updatedRow,
@@ -77,9 +77,9 @@ function App() {
         data: data as [],
       },
     });
-  }
+  }, [appState]);
 
-  function onDeleteRow(index: number) {
+  const onDeleteRow = useCallback((index: number) => {
     const data = [
       ...appState.userData.data.slice(0, index),
       ...appState.userData.data.slice(index + 1),
@@ -91,7 +91,7 @@ function App() {
         data: data as [],
       },
     });
-  }
+  }, [appState]);
 
   function focusArea() {
     if (appState.userData.ready && (appState.currentStep === 1 || appState.currentStep === 2)) {
@@ -136,7 +136,7 @@ function App() {
                   STEPS
                     .map((step, i) => (
                       <StepLabel
-                        key={i}
+                        key={step}
                         active={i === appState.currentStep}
                         completed={i < appState.currentStep}
                         text={step}

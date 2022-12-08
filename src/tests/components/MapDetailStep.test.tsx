@@ -12,9 +12,9 @@ describe('<MapDetailStep />', () => {
     );
 
     expect(screen.getByText(/Map Details?/i)).toBeInTheDocument();
-    expect(screen.getByText(/What type of map do you want to create??/i)).toBeInTheDocument();
+    expect(screen.getByText('What type of map do you want to create?')).toBeInTheDocument();
 
-    expect(screen.getByPlaceholderText(/[Map title]?/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('[Map title]')).toBeInTheDocument();
 
     const input = screen.getByTestId('map-title-input') as HTMLInputElement;
     fireEvent.change(input, {
