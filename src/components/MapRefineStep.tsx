@@ -2,7 +2,7 @@ import {
   Box, Heading, TableBody, TableRow, TableCell,
   Select, Text, Notification, Table,
 } from 'grommet';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
@@ -11,6 +11,48 @@ function MapRefineStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const columns = appState.userData.data.length > 0
     ? Object.keys(appState.userData.data[0]).map((header) => header) : [];
+
+  const setLatitude = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, latitude: event.option },
+    });
+  }, [appState.dataKeys]);
+
+  const setLongitude = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, longitude: event.option },
+    });
+  }, [appState.dataKeys]);
+
+  const setSizeValues = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, sizeValues: event.option },
+    });
+  }, [appState.dataKeys]);
+
+  const setColorValues = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, colorValues: event.option },
+    });
+  }, [appState.dataKeys]);
+
+  const setNameKey = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, name: event.option },
+    });
+  }, [appState.dataKeys]);
+
+  const setValueKey = useCallback((event: any) => {
+    setAppState({
+      ...appState,
+      dataKeys: { ...appState.dataKeys, values: event.option },
+    });
+  }, [appState.dataKeys]);
 
   useEffect(() => {
     if (!appState.dataKeys.name) return;
@@ -49,12 +91,7 @@ function MapRefineStep() {
                         options={columns}
                         alignSelf="end"
                         value={appState.dataKeys.latitude}
-                        onChange={({ option }) => {
-                          setAppState({
-                            ...appState,
-                            dataKeys: { ...appState.dataKeys, latitude: option },
-                          });
-                        }}
+                        onChange={setLatitude}
                       />
                     </TableCell>
                   </TableRow>
@@ -67,12 +104,7 @@ function MapRefineStep() {
                         options={columns}
                         alignSelf="end"
                         value={appState.dataKeys.longitude}
-                        onChange={({ option }) => {
-                          setAppState({
-                            ...appState,
-                            dataKeys: { ...appState.dataKeys, longitude: option },
-                          });
-                        }}
+                        onChange={setLongitude}
                       />
                     </TableCell>
                   </TableRow>
@@ -85,14 +117,7 @@ function MapRefineStep() {
                         options={columns}
                         alignSelf="end"
                         value={appState.dataKeys.sizeValues}
-                        onChange={
-                          ({ option }) => {
-                            setAppState({
-                              ...appState,
-                              dataKeys: { ...appState.dataKeys, sizeValues: option },
-                            });
-                          }
-                        }
+                        onChange={setSizeValues}
                       />
                     </TableCell>
                   </TableRow>
@@ -105,14 +130,7 @@ function MapRefineStep() {
                         options={columns}
                         alignSelf="end"
                         value={appState.dataKeys.colorValues}
-                        onChange={
-                          ({ option }) => {
-                            setAppState({
-                              ...appState,
-                              dataKeys: { ...appState.dataKeys, colorValues: option },
-                            });
-                          }
-                        }
+                        onChange={setColorValues}
                       />
                     </TableCell>
                   </TableRow>
@@ -129,12 +147,7 @@ function MapRefineStep() {
                         options={columns}
                         value={appState.dataKeys.name}
                         alignSelf="end"
-                        onChange={({ option }) => {
-                          setAppState({
-                            ...appState,
-                            dataKeys: { ...appState.dataKeys, name: option },
-                          });
-                        }}
+                        onChange={setNameKey}
                       />
                     </TableCell>
                   </TableRow>
@@ -147,12 +160,7 @@ function MapRefineStep() {
                         options={columns}
                         value={appState.dataKeys.values}
                         alignSelf="end"
-                        onChange={({ option }) => {
-                          setAppState({
-                            ...appState,
-                            dataKeys: { ...appState.dataKeys, values: option },
-                          });
-                        }}
+                        onChange={setValueKey}
                       />
                     </TableCell>
                   </TableRow>
