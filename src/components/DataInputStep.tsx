@@ -6,7 +6,6 @@ import Papa from 'papaparse';
 import React from 'react';
 import { useRecoilState } from 'recoil';
 import { recoilState } from '../store';
-import UserDataTable from './UserDataTable';
 
 function DataInputStep() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
@@ -69,7 +68,6 @@ function DataInputStep() {
               />
             </Box>
           ) }
-        { appState.userData.ready && <UserDataTable data={appState.userData.data} /> }
       </Box>
     </Box>
   );

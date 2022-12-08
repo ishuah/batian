@@ -28,7 +28,8 @@ interface AppState {
   userData: IUserData,
   currentStep: number,
   dataKeys: IDataKeys,
-  mismatchedRegions: number,
+  mismatchedRegions: string[],
+  regionSuggestions: string[],
   choroplethColorScheme: string,
   symbolColorScheme: string,
   symbolShape: string

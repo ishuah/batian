@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 import { recoilState } from '../store';
 import { REGIONS } from '../constants';
 
-// TODO: cleanup this component
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
 
@@ -83,7 +82,7 @@ function RenderMap() {
       [min, max],
       choroplethColor(appState.choroplethColorScheme),
     );
-    if (regionValue[d.properties.name]) return color(regionValue[d.properties.name]);
+    if (regionValue[d.properties.admin]) return color(regionValue[d.properties.admin]);
     return '#c9d1da';
   };
 
