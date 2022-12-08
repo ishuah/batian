@@ -5,8 +5,8 @@ import UserDataTable from '../../components/UserDataTable';
 describe('<UserDataTable />', () => {
   test('should render <UserDataTable />', () => {
     const data = [{ country: 'string', happy_index: 'number' }] as never[];
-    const mockOnUpdateRow = jest.fn(() => {});
-    const mockOnDeleteRow = jest.fn(() => {});
+    const mockOnUpdateRow = jest.fn();
+    const mockOnDeleteRow = jest.fn();
     render(
       <UserDataTable
         data={data}
@@ -32,6 +32,5 @@ describe('<UserDataTable />', () => {
 
     fireEvent.click(screen.getByText(/Save/i));
     expect(mockOnUpdateRow).toHaveBeenCalled();
-
   });
 });
