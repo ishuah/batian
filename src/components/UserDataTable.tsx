@@ -63,12 +63,12 @@ function UserDataTable(props: UserDataTableProps) {
   }, [activeRow, activeRowIndex, show]);
 
   const deleteRow = useCallback(() => {
-    if (activeRowIndex) onDeleteRow(activeRowIndex!);
+    if (activeRowIndex !== undefined) onDeleteRow(activeRowIndex!);
     setShow(false);
   }, [activeRowIndex, show]);
 
   const updateRow = useCallback(() => {
-    if (activeRowIndex) onUpdateRow(activeRow, activeRowIndex);
+    if (activeRowIndex !== undefined) onUpdateRow(activeRow, activeRowIndex);
     setShow(false);
   }, [activeRow, activeRowIndex, show]);
 
