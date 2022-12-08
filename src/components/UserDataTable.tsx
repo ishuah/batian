@@ -44,6 +44,7 @@ function UserDataTable(props: UserDataTableProps) {
     .map((header) => ({
       property: header,
       header,
+      size: 'small',
       render: (datum: any) => (
         <Text color={mismatchedRegions.includes(datum[header]) ? 'red' : ''}>{datum[header]}</Text>
       ),
@@ -62,6 +63,7 @@ function UserDataTable(props: UserDataTableProps) {
         size="large"
         background="white"
         border
+        fill="horizontal"
         columns={columns}
         data={data}
         onClickRow={(event) => onClickRow(event as MouseClick<any>)}
