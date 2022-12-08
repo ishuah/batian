@@ -19,13 +19,17 @@ function MapRefineStep() {
       .then((geojson) => {
         const userDataRegions: string[] = appState
           .userData.data.map((row) => row[appState.dataKeys.name!]);
-        const regions: string[] = geojson.features.map((x: any) => x.properties.name);
+        const regions: string[] = geojson.features.map((x: any) => x.properties.admin);
         const mismatchedRegions = userDataRegions.filter(
           (region) => !regions.includes(region),
         ) as [];
-        setAppState({ ...appState, mismatchedRegions: mismatchedRegions.length });
+        const regionSuggestions = regions.filter(
+          (region) => !userDataRegions.includes(region),
+        );
+
+        setAppState({ ...appState, mismatchedRegions, regionSuggestions });
       });
-  }, [appState.dataKeys.name]);
+  }, [appState.dataKeys.name, appState.userData.data]);
 
   return (
     <Box height="large">
@@ -160,12 +164,11 @@ function MapRefineStep() {
           && (
             <Box margin="small" pad="small">
               <Notification
-                status={appState.mismatchedRegions > 0 ? 'warning' : 'normal'}
-                title={appState.mismatchedRegions > 0 ? 'Data mismatch detected' : 'Data looks good!'}
-                message={appState.mismatchedRegions > 0
-                  ? `We couldn't match ${appState.mismatchedRegions} entries from your file,
-                  your visualization might not be complete. To resolve this issue, please
-                  make sure your data matches the country names for ${appState.map.region}`
+                status={appState.mismatchedRegions.length > 0 ? 'warning' : 'normal'}
+                title={appState.mismatchedRegions.length > 0 ? 'Data mismatch detected' : 'Data looks good!'}
+                message={appState.mismatchedRegions.length > 0
+                  ? `We couldn't match ${appState.mismatchedRegions.length} entries from your file,
+                  your visualization might not be complete. You can edit the values in red to match countries in ${appState.map.region}`
                   : `All the entries in your map correspond to the set of countries for ${appState.map.region}`}
               />
             </Box>

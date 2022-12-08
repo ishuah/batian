@@ -15,6 +15,7 @@ import { STEPS } from '../constants';
 import { recoilState } from '../store';
 import MapRefineStep from '../components/MapRefineStep';
 import VisualizeStep from '../components/VisualizeStep';
+import UserDataTable from '../components/UserDataTable';
 
 const CustomTheme = {
   global: {
@@ -43,7 +44,8 @@ function App() {
       userData: { data: [], errors: [], ready: false },
       currentStep: 0,
       dataKeys: {},
-      mismatchedRegions: 0,
+      mismatchedRegions: [],
+      regionSuggestions: [],
       choroplethColorScheme: 'Reds',
       symbolColorScheme: 'Red',
       symbolShape: 'Circle',
@@ -60,6 +62,56 @@ function App() {
     }
 
     return true;
+  }
+
+  function onUpdateRow(updatedRow: any, index: number) {
+    const data = [
+      ...appState.userData.data.slice(0, index),
+      updatedRow,
+      ...appState.userData.data.slice(index + 1),
+    ];
+    setAppState({
+      ...appState,
+      userData: {
+        ...appState.userData,
+        data: data as [],
+      },
+    });
+  }
+
+  function onDeleteRow(index: number) {
+    const data = [
+      ...appState.userData.data.slice(0, index),
+      ...appState.userData.data.slice(index + 1),
+    ];
+    setAppState({
+      ...appState,
+      userData: {
+        ...appState.userData,
+        data: data as [],
+      },
+    });
+  }
+
+  function focusArea() {
+    if (appState.userData.ready && (appState.currentStep === 1 || appState.currentStep === 2)) {
+      return (
+        <UserDataTable
+          data={appState.userData.data}
+          onUpdateRow={onUpdateRow}
+          onDeleteRow={onDeleteRow}
+          mismatchedRegions={appState.mismatchedRegions}
+          regionSuggestions={appState.regionSuggestions}
+        />
+      );
+    }
+
+    return (
+      <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
+        <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
+        <RenderMap />
+      </Box>
+    );
   }
 
   return (
@@ -109,10 +161,7 @@ function App() {
               </Box>
             </Box>
             <Box gridArea="main" height="large">
-              <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
-                <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
-                <RenderMap />
-              </Box>
+              {focusArea()}
             </Box>
           </Grid>
         </Box>
