@@ -2,11 +2,26 @@ import React from 'react';
 import { RecoilRoot } from 'recoil';
 import { render, fireEvent, screen } from '@testing-library/react';
 import MapDetailStep from '../../components/MapDetailStep';
+import { RecoilObserver, recoilState } from '../../store';
 
 describe('<MapDetailStep />', () => {
   test('should render <MapDetailStep />', () => {
+    const onChange = jest.fn();
+    const expectedState: AppState = {
+      map: { title: 'The Sternness of Plates', type: '', region: 'Africa' },
+      userData: { data: [], errors: [], ready: false },
+      currentStep: 0,
+      dataKeys: {},
+      mismatchedRegions: [],
+      regionSuggestions: [],
+      choroplethColorScheme: 'Reds',
+      symbolColorScheme: 'Red',
+      symbolShape: 'Circle',
+    };
+
     render(
       <RecoilRoot>
+        <RecoilObserver node={recoilState} onChange={onChange} />
         <MapDetailStep />
       </RecoilRoot>,
     );
@@ -21,5 +36,7 @@ describe('<MapDetailStep />', () => {
       target: { value: 'The Sternness of Plates' },
     });
     expect(input.value).toBe('The Sternness of Plates');
+    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith(expectedState);
   });
 });

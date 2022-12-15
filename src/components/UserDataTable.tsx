@@ -63,7 +63,7 @@ function UserDataTable(props: UserDataTableProps) {
   }, [activeRow, activeRowIndex, show]);
 
   const deleteRow = useCallback(() => {
-    if (activeRowIndex !== undefined) onDeleteRow(activeRowIndex!);
+    if (activeRowIndex !== undefined) onDeleteRow(activeRowIndex);
     setShow(false);
   }, [activeRowIndex, show]);
 
