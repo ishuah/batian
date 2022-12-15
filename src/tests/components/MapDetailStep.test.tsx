@@ -16,7 +16,7 @@ describe('<MapDetailStep />', () => {
       regionSuggestions: [],
       choroplethColorScheme: 'Reds',
       symbolColorScheme: 'Red',
-      symbolShape: 'Circle'
+      symbolShape: 'Circle',
     };
 
     render(
