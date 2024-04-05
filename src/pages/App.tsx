@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react';
 import {
   Box, Button,
-  Grid, Grommet, Header, Heading, Main,
+  Grid, Grommet, Header, Heading, Main, Image,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
 
@@ -20,7 +20,8 @@ import UserDataTable from '../components/UserDataTable';
 const CustomTheme = {
   global: {
     colors: {
-      brand: '#3d9fa0',
+      brand: '#236A87',
+      background: '#FFF8EF',
     },
   },
 };
@@ -107,7 +108,7 @@ function App() {
     }
 
     return (
-      <Box background="white" border={{ color: 'light-5', size: 'xsmall' }}>
+      <Box>
         <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
         <RenderMap />
       </Box>
@@ -116,11 +117,15 @@ function App() {
 
   return (
     <Grommet theme={CustomTheme}>
-      <Main fill="vertical" pad="none">
-        <Header background="white" pad="xxsmall">
-          <Heading level="4" margin={{ vertical: 'small', horizontal: 'small' }}>Batian</Heading>
+      <Main pad="medium">
+        <Header pad="none" align="center">
+          <Image
+            width={75}
+            height={75}
+            src={`${process.env.PUBLIC_URL}/img/batian-logo.png`}
+          />
         </Header>
-        <Box pad="large" align="center">
+        <Box pad="medium" align="center">
           <Grid
             rows={['large']}
             columns={['large', 'large']}
