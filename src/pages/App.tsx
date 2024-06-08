@@ -16,6 +16,7 @@ import { recoilState } from '../store';
 import MapRefineStep from '../components/MapRefineStep';
 import VisualizeStep from '../components/VisualizeStep';
 import UserDataTable from '../components/UserDataTable';
+import MapTypeSelection from '../components/MapTypeSelection';
 
 const CustomTheme = {
   global: {
@@ -109,7 +110,10 @@ function App() {
 
     return (
       <Box>
-        <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
+        { appState.currentStep !== 0
+          && (
+            <Heading level="3" margin="medium">{ appState.map.title || '[Map Title]'}</Heading>
+          )}
         <RenderMap />
       </Box>
     );
@@ -136,33 +140,40 @@ function App() {
             ]}
           >
             <Box gridArea="nav">
-              <Box direction="row" pad="medium">
-                {
-                  STEPS
-                    .map((step, i) => (
-                      <StepLabel
-                        key={step}
-                        active={i === appState.currentStep}
-                        completed={i < appState.currentStep}
-                        text={step}
-                        step={i + 1}
-                      />
-                    ))
-                }
-              </Box>
+              { appState.currentStep !== 0
+                  && (
+                    <Box direction="row" pad="medium">
+                      {
+                        STEPS
+                          .map((step, i) => (
+                            <StepLabel
+                              key={step}
+                              active={i === appState.currentStep}
+                              completed={i < appState.currentStep}
+                              text={step}
+                              step={i + 1}
+                            />
+                          ))
+                        }
+                    </Box>
+                  )}
               <Box pad="medium">
-                { appState.currentStep === 0 && (<MapDetailStep />) }
-                { appState.currentStep === 1 && (<DataInputStep />) }
-                { appState.currentStep === 2 && (<MapRefineStep />) }
-                { appState.currentStep === 3 && (<VisualizeStep />) }
+                { appState.currentStep === 0 && (<MapTypeSelection />) }
+                { appState.currentStep === 1 && (<MapDetailStep />) }
+                { appState.currentStep === 2 && (<DataInputStep />) }
+                { appState.currentStep === 3 && (<MapRefineStep />) }
+                { appState.currentStep === 4 && (<VisualizeStep />) }
 
-                <Box direction="row" justify="between">
-                  <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
-                  <Box direction="row">
-                    <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
-                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
-                  </Box>
-                </Box>
+                { appState.currentStep !== 0
+                  && (
+                    <Box direction="row" justify="between">
+                      <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
+                      <Box direction="row">
+                        <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
+                        <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
+                      </Box>
+                    </Box>
+                  )}
               </Box>
             </Box>
             <Box gridArea="main" height="large" overflow="auto">
