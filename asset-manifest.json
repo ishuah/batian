@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/batian/static/css/main.343a5906.css",
-    "main.js": "/batian/static/js/main.fff5dee8.js",
-    "static/js/787.2794bd77.chunk.js": "/batian/static/js/787.2794bd77.chunk.js",
+    "main.css": "/batian/static/css/main.e6c13ad2.css",
+    "main.js": "/batian/static/js/main.20c7d037.js",
+    "static/js/453.ba289ed4.chunk.js": "/batian/static/js/453.ba289ed4.chunk.js",
     "index.html": "/batian/index.html",
-    "main.343a5906.css.map": "/batian/static/css/main.343a5906.css.map",
-    "main.fff5dee8.js.map": "/batian/static/js/main.fff5dee8.js.map",
-    "787.2794bd77.chunk.js.map": "/batian/static/js/787.2794bd77.chunk.js.map"
+    "main.e6c13ad2.css.map": "/batian/static/css/main.e6c13ad2.css.map",
+    "main.20c7d037.js.map": "/batian/static/js/main.20c7d037.js.map",
+    "453.ba289ed4.chunk.js.map": "/batian/static/js/453.ba289ed4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.343a5906.css",
-    "static/js/main.fff5dee8.js"
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.20c7d037.js"
   ]
 }
