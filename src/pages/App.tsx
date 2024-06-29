@@ -6,6 +6,7 @@ import {
   Grid, Grommet, Header, Heading, Main, Image,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
+import * as d3 from 'd3';
 
 import DataInputStep from '../components/DataInputStep';
 import MapDetailStep from '../components/MapDetailStep';
@@ -16,6 +17,7 @@ import { recoilState } from '../store';
 import MapRefineStep from '../components/MapRefineStep';
 import VisualizeStep from '../components/VisualizeStep';
 import UserDataTable from '../components/UserDataTable';
+import DownloadStep from '../components/DownloadStep';
 
 const CustomTheme = {
   global: {
@@ -60,6 +62,10 @@ function App() {
       if (appState.map.type === 'Symbol') return !appState.dataKeys.latitude || !appState.dataKeys.longitude || !appState.dataKeys.sizeValues;
 
       return !appState.dataKeys.name || !appState.dataKeys.values;
+    }
+    if (appState.currentStep === 3) {
+      if (appState.map.type === 'Symbol') return !appState.symbolColorScheme || !appState.symbolShape;
+      return !appState.choroplethColorScheme;
     }
 
     return true;
@@ -156,6 +162,7 @@ function App() {
                 { appState.currentStep === 1 && (<DataInputStep />) }
                 { appState.currentStep === 2 && (<MapRefineStep />) }
                 { appState.currentStep === 3 && (<VisualizeStep />) }
+                { appState.currentStep === 4 && (<DownloadStep />)}
 
                 <Box direction="row" justify="between">
                   <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
