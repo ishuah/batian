@@ -54,11 +54,11 @@ function DownloadStep() {
       const bbox = svg?.getBBox();
 
       const canvas = document.createElement('canvas');
-      canvas.width = bbox?.width || 720;
-      canvas.height = bbox?.height || 720;
+      canvas.width = 720;
+      canvas.height = 720;
 
       const context = canvas.getContext('2d');
-      context?.drawImage(img, 0, 0, bbox?.width || 720, bbox?.height || 720);
+      context?.drawImage(img, 0, 0, 720, 720);
 
       URL.revokeObjectURL(url);
 
