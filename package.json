@@ -32,6 +32,7 @@
     "start": "WATCHPACK_POLLING=true react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!d3)/\"",
+    "test:coverage": "react-scripts test --transformIgnorePatterns \"node_modules/(?!d3)/\" --coverage --watchAll=false",
     "lint": "npx eslint src/*",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
