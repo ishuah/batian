@@ -8,7 +8,7 @@ describe('<DownloadStep />', () => {
     render(
       <RecoilRoot>
         <DownloadStep />
-      </RecoilRoot>
+      </RecoilRoot>,
     );
   });
 

@@ -6,7 +6,6 @@ import {
   Grid, Grommet, Header, Heading, Main, Image,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
-import * as d3 from 'd3';
 
 import DataInputStep from '../components/DataInputStep';
 import MapDetailStep from '../components/MapDetailStep';

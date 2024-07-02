@@ -39,4 +39,30 @@ describe('<MapDetailStep />', () => {
     expect(onChange).toHaveBeenCalled();
     expect(onChange).toHaveBeenCalledWith(expectedState);
   });
+
+  test('should update map type when radio button is selected <MapDetailStep />', () => {
+    const onChange = jest.fn();
+    const expectedState: AppState = {
+      map: { title: '', type: 'Choropleth', region: 'Africa' },
+      userData: { data: [], errors: [], ready: false },
+      currentStep: 0,
+      dataKeys: {},
+      mismatchedRegions: [],
+      regionSuggestions: [],
+      choroplethColorScheme: 'Reds',
+      symbolColorScheme: 'Red',
+      symbolShape: 'Circle',
+    };
+
+    render(
+      <RecoilRoot>
+        <RecoilObserver node={recoilState} onChange={onChange} />
+        <MapDetailStep />
+      </RecoilRoot>,
+    );
+
+    fireEvent.click(screen.getByText('Choropleth'));
+    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledWith(expectedState);
+  });
 });
