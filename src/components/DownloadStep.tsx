@@ -81,8 +81,8 @@ function DownloadStep() {
         <Heading level="4">Download visualization</Heading>
         <Paragraph>Download your visualization in either SVG or PNG format.</Paragraph>
         <Box direction="row">
-          <Button onClick={downloadSVG} label="Download SVG" primary margin={{ right: 'small' }} />
-          <Button onClick={downloadPNG} label="Download PNG" primary />
+          <Button data-testid="download-svg" onClick={downloadSVG} label="Download SVG" primary margin={{ right: 'small' }} />
+          <Button data-testid="download-png" onClick={downloadPNG} label="Download PNG" primary />
         </Box>
       </Box>
     </Box>
