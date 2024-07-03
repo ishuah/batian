@@ -16,7 +16,6 @@ function DownloadStep() {
       styleRules.push(sheet.cssRules.item(i)?.cssText);
     }
     const style = document.createElement('style');
-    style.type = 'text/css';
     style.appendChild(document.createTextNode(styleRules.join(' ')));
     return style;
   }
@@ -50,9 +49,6 @@ function DownloadStep() {
     const url = generateSVGBlob(svg);
     const img = new window.Image();
     img.addEventListener('load', () => {
-      // draw the image on an ad-hoc canvas
-      const bbox = svg?.getBBox();
-
       const canvas = document.createElement('canvas');
       canvas.width = 720;
       canvas.height = 720;

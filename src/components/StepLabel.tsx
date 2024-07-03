@@ -9,7 +9,7 @@ type StepLabelProps = {
   active?: boolean
 }
 
-function StepLabel(props: StepLabelProps) {
+function StepLabel(props: Readonly<StepLabelProps>) {
   const {
     text, step, completed, active,
   } = props;

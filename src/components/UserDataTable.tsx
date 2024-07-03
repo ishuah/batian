@@ -26,7 +26,7 @@ type UserDataTableProps = {
   regionSuggestions: string[],
 }
 
-function UserDataTable(props: UserDataTableProps) {
+function UserDataTable(props: Readonly<UserDataTableProps>) {
   const [show, setShow] = useState(false);
   const [activeRow, setActiveRow] = useState<any>();
   const [activeRowIndex, setActiveRowIndex] = useState<number>();
