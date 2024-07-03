@@ -4,7 +4,12 @@ import {
 } from 'grommet';
 import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
-import { CHOROPLETH_COLORS, SYMBOLS, SYMBOL_PALETTE } from '../constants';
+import {
+  CHOROPLETH_COLORS,
+  INTERPOLATION_TYPE,
+  SYMBOLS,
+  SYMBOL_PALETTE,
+} from '../constants';
 import { recoilState } from '../store';
 
 function VisualizeStep() {
@@ -20,6 +25,10 @@ function VisualizeStep() {
 
   const setChoroplethColorScheme = useCallback((event: any) => {
     setAppState({ ...appState, choroplethColorScheme: event.option });
+  }, [appState]);
+
+  const setInterpolationType = useCallback((event: any) => {
+    setAppState({ ...appState, interpolationType: event.option });
   }, [appState]);
   return (
     <Box height="large">
@@ -57,18 +66,32 @@ function VisualizeStep() {
                 </>
               )
               : (
-                <TableRow>
-                  <TableCell>
-                    <Text margin="small">Select palette:</Text>
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      options={CHOROPLETH_COLORS}
-                      value={appState.choroplethColorScheme}
-                      onChange={setChoroplethColorScheme}
-                    />
-                  </TableCell>
-                </TableRow>
+                <>
+                  <TableRow>
+                    <TableCell>
+                      <Text margin="small">Select palette:</Text>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        options={CHOROPLETH_COLORS}
+                        value={appState.choroplethColorScheme}
+                        onChange={setChoroplethColorScheme}
+                      />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>
+                      <Text margin="small">Interpolation:</Text>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        options={INTERPOLATION_TYPE}
+                        value={appState.interpolationType}
+                        onChange={setInterpolationType}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </>
               )}
           </TableBody>
         </Table>

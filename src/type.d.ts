@@ -31,6 +31,7 @@ interface AppState {
   mismatchedRegions: string[],
   regionSuggestions: string[],
   choroplethColorScheme: string,
+  interpolationType: string,
   symbolColorScheme: string,
   symbolShape: string
 }

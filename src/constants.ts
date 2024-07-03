@@ -16,7 +16,8 @@ const SYMBOL_PALETTE: Palette = {
   Nonchalant: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f', '#edc949', '#af7aa1', '#ff9da7', '#9c755f', '#bab0ab'],
 };
 const SYMBOLS: string[] = ['Circle', 'Square', 'Triangle', 'Diamond'];
+const INTERPOLATION_TYPE = ['Linear', 'Threshold', 'Quantize', 'Quantile'];
 
 export {
-  STEPS, REGIONS, CHOROPLETH_COLORS, SYMBOL_PALETTE, SYMBOLS,
+  STEPS, REGIONS, CHOROPLETH_COLORS, SYMBOL_PALETTE, SYMBOLS, INTERPOLATION_TYPE,
 };

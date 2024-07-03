@@ -49,6 +49,7 @@ function App() {
       mismatchedRegions: [],
       regionSuggestions: [],
       choroplethColorScheme: 'Reds',
+      interpolationType: 'Linear',
       symbolColorScheme: 'Whimsical',
       symbolShape: 'Circle',
     });

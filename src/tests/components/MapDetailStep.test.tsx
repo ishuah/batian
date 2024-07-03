@@ -15,6 +15,7 @@ describe('<MapDetailStep />', () => {
       mismatchedRegions: [],
       regionSuggestions: [],
       choroplethColorScheme: 'Reds',
+      interpolationType: 'Linear',
       symbolColorScheme: 'Whimsical',
       symbolShape: 'Circle',
     };
@@ -50,6 +51,7 @@ describe('<MapDetailStep />', () => {
       mismatchedRegions: [],
       regionSuggestions: [],
       choroplethColorScheme: 'Reds',
+      interpolationType: 'Linear',
       symbolColorScheme: 'Whimsical',
       symbolShape: 'Circle',
     };

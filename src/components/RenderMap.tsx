@@ -63,13 +63,82 @@ function RenderMap() {
     }
   };
 
-  const getDataRange = (key: string): number[] => {
-    const values = appState.userData.data.map((row) => {
+  const getDataValues = (key: string): number[] => {
+    const value = appState.userData.data.map((row) => {
       if (row[key] === undefined) return 0;
       return Number(row[key]);
     });
+    return value;
+  };
 
+  const getDataRange = (key: string): number[] => {
+    const values = getDataValues(key);
     return [Math.min(...values), Math.max(...values)];
+  };
+
+  const numericSort = (arr: number[]): number[] => arr.slice().sort((a, b) => a - b);
+
+  const linearInterpolation = () => {
+    const values = getDataValues(appState.dataKeys.values!);
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+    return d3.scaleLinear<string>()
+      .domain([0, Math.max(...values)])
+      .range(
+        [
+          colorScheme(0),
+          colorScheme(1),
+        ],
+      );
+  };
+
+  const thresholdInterpolation = () => {
+    const values = numericSort(getDataValues(appState.dataKeys.values!));
+    const halfPoint = Math.ceil(values.length / 2);
+    const lowerThreshold = d3.median(values.slice(0, halfPoint));
+    const upperThreshold = d3.median(values.slice(halfPoint, values.length));
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+
+    return d3.scaleThreshold<number, string>()
+      .domain([lowerThreshold!, upperThreshold!])
+      .range(
+        [
+          colorScheme(0),
+          colorScheme(0.5),
+          colorScheme(1),
+        ],
+      );
+  };
+
+  const quantileInterpolation = () => {
+    const values = getDataValues(appState.dataKeys.values!);
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+    return d3.scaleQuantile<string>()
+      .domain(values)
+      .range(
+        [
+          colorScheme(0),
+          colorScheme(0.25),
+          colorScheme(0.5),
+          colorScheme(0.75),
+          colorScheme(1),
+        ],
+      );
+  };
+
+  const quantizeInterpolation = () => {
+    const [min, max] = getDataRange(appState.dataKeys.values!);
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+    return d3.scaleQuantize<string>()
+      .domain([min, max])
+      .range(
+        [
+          colorScheme(0),
+          colorScheme(0.25),
+          colorScheme(0.5),
+          colorScheme(0.75),
+          colorScheme(1),
+        ],
+      );
   };
 
   const baseLayerFill = (d: any) => {
@@ -78,12 +147,22 @@ function RenderMap() {
       regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
     });
 
-    const [min, max] = getDataRange(appState.dataKeys.values!);
-    const color = d3.scaleSequential(
-      [min, max],
-      choroplethColor(appState.choroplethColorScheme),
-    );
-    if (regionValue[d.properties.admin]) return color(regionValue[d.properties.admin]);
+    const color = linearInterpolation();
+
+    if (regionValue[d.properties.admin]) {
+      switch (appState.interpolationType) {
+        case 'Linear':
+          return linearInterpolation()(regionValue[d.properties.admin]);
+        case 'Threshold':
+          return thresholdInterpolation()(regionValue[d.properties.admin]);
+        case 'Quantile':
+          return quantileInterpolation()(regionValue[d.properties.admin]);
+        case 'Quantize':
+          return quantizeInterpolation()(regionValue[d.properties.admin]);
+        default:
+          return linearInterpolation()(regionValue[d.properties.admin]);
+      }
+    }
     return '#c9d1da';
   };
 
