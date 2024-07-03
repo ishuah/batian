@@ -146,6 +146,42 @@ function RenderMap() {
           .attr('fill', symbolColor)
           .attr('opacity', 0.7);
       }
+
+      // Render legend
+      if (appState.dataKeys.colorValues) {
+        let offset = 50;
+        const padding = 17;
+        const legendWidth = 14;
+        const legendHeight = 14;
+        const colorData = getSymbolColorData(appState.dataKeys.colorValues);
+
+        const legend = svg.selectAll('g.legend')
+          .data(colorData);
+
+        legend.enter()
+          .append('rect')
+          .attr('width', legendWidth)
+          .attr('height', legendHeight)
+          .attr('fill', (d) => SYMBOL_PALETTE[appState.symbolColorScheme][colorData.indexOf(d)])
+          .attr('transform', (d, i) => {
+            if (i === 0) return `translate(${offset}, ${620})`;
+            offset += colorData[i - 1].length * 8;
+            return `translate(${offset + (legendWidth * i)}, ${620})`;
+          });
+
+        offset = 50;
+        legend.enter()
+          .append('text')
+          .attr('x', (d, i) => {
+            if (i === 0) return padding + offset;
+            offset += colorData[i - 1].length * 8;
+            return padding + offset + (legendWidth * i);
+          })
+          .attr('y', 632)
+          .attr('font-size', 'smaller')
+          .attr('font-family', 'Arial, Helvetica, sans-serif')
+          .text((d) => d);
+      }
     };
 
     getD3Data();

@@ -49,7 +49,7 @@ function App() {
       mismatchedRegions: [],
       regionSuggestions: [],
       choroplethColorScheme: 'Reds',
-      symbolColorScheme: 'Red',
+      symbolColorScheme: 'Whimsical',
       symbolShape: 'Circle',
     });
   }, [appState]);
