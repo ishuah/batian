@@ -10,7 +10,7 @@ const initialAppState: AppState = {
   mismatchedRegions: [],
   regionSuggestions: [],
   choroplethColorScheme: 'Reds',
-  symbolColorScheme: 'Red',
+  symbolColorScheme: 'Whimsical',
   symbolShape: 'Circle',
 };
 

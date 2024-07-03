@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import * as d3 from 'd3';
 import { recoilState } from '../store';
-import { REGIONS } from '../constants';
+import { REGIONS, SYMBOL_PALETTE } from '../constants';
 
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
@@ -32,19 +32,20 @@ function RenderMap() {
     }
   };
 
-  const symbolColor = (colorString: string) => {
-    switch (colorString) {
-      case 'Red':
-        return '#c71e1d';
-      case 'Blue':
-        return '#18a1cd';
-      case 'Green':
-        return '#5ea685';
-      case 'Orange':
-        return '#fa8c00';
-      default:
-        return '#c71e1d';
-    }
+  const getSymbolColorData = (key: string): string[] => {
+    const uniqueFilter = (
+      value: string,
+      index: number,
+      array: string[],
+    ) => array.indexOf(value) === index;
+
+    return appState.userData.data.map((row) => row[key]).filter(uniqueFilter);
+  };
+
+  const symbolColor = (d: any) => {
+    const colorData = getSymbolColorData(appState.dataKeys.colorValues!);
+    const colorPalette = SYMBOL_PALETTE[appState.symbolColorScheme];
+    return colorPalette[colorData.indexOf(d[appState.dataKeys.colorValues!])];
   };
 
   const symbolShape = (shapeString: string) => {
@@ -142,7 +143,7 @@ function RenderMap() {
           // eslint-disable-next-line dot-notation
           .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
           .attr('d', symbolShapeAndSize)
-          .attr('fill', symbolColor(appState.symbolColorScheme))
+          .attr('fill', symbolColor)
           .attr('opacity', 0.7);
       }
     };

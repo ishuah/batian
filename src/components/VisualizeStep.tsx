@@ -4,7 +4,7 @@ import {
 } from 'grommet';
 import React, { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
-import { CHOROPLETH_COLORS, SYMBOLS, SYMBOL_COLORS } from '../constants';
+import { CHOROPLETH_COLORS, SYMBOLS, SYMBOL_PALETTE } from '../constants';
 import { recoilState } from '../store';
 
 function VisualizeStep() {
@@ -32,7 +32,7 @@ function VisualizeStep() {
                 <>
                   <TableRow>
                     <TableCell>
-                      <Text margin="small">Select symbol shape:</Text>
+                      <Text margin="small">Symbol shape:</Text>
                     </TableCell>
                     <TableCell>
                       <Select
@@ -44,11 +44,11 @@ function VisualizeStep() {
                   </TableRow>
                   <TableRow>
                     <TableCell>
-                      <Text margin="small">Select color:</Text>
+                      <Text margin="small">Select palette:</Text>
                     </TableCell>
                     <TableCell>
                       <Select
-                        options={SYMBOL_COLORS}
+                        options={Object.keys(SYMBOL_PALETTE)}
                         value={appState.symbolColorScheme}
                         onChange={setSymbolColor}
                       />

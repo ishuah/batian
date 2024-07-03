@@ -34,3 +34,7 @@ interface AppState {
   symbolColorScheme: string,
   symbolShape: string
 }
+
+interface Palette {
+  [key: string]: string[]
+}
