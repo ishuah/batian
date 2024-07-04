@@ -71,18 +71,14 @@ function RenderMap() {
     return value;
   };
 
-  const getDataRange = (key: string): number[] => {
-    const values = getDataValues(key);
-    return [Math.min(...values), Math.max(...values)];
-  };
+  const getDataRange = (data: number[]): number[] => [Math.min(...data), Math.max(...data)];
 
   const numericSort = (arr: number[]): number[] => arr.slice().sort((a, b) => a - b);
 
-  const linearInterpolation = () => {
-    const values = getDataValues(appState.dataKeys.values!);
+  const linearInterpolation = (max: number) => {
     const colorScheme = choroplethColor(appState.choroplethColorScheme);
     return d3.scaleLinear<string>()
-      .domain([0, Math.max(...values)])
+      .domain([0, max])
       .range(
         [
           colorScheme(0),
@@ -91,11 +87,10 @@ function RenderMap() {
       );
   };
 
-  const thresholdInterpolation = () => {
-    const values = numericSort(getDataValues(appState.dataKeys.values!));
-    const halfPoint = Math.ceil(values.length / 2);
-    const lowerThreshold = d3.median(values.slice(0, halfPoint));
-    const upperThreshold = d3.median(values.slice(halfPoint, values.length));
+  const thresholdInterpolation = (data: number[]) => {
+    const halfPoint = Math.ceil(data.length / 2);
+    const lowerThreshold = d3.median(data.slice(0, halfPoint));
+    const upperThreshold = d3.median(data.slice(halfPoint, data.length));
     const colorScheme = choroplethColor(appState.choroplethColorScheme);
 
     return d3.scaleThreshold<number, string>()
@@ -109,11 +104,10 @@ function RenderMap() {
       );
   };
 
-  const quantileInterpolation = () => {
-    const values = getDataValues(appState.dataKeys.values!);
+  const quantileInterpolation = (data: number[]) => {
     const colorScheme = choroplethColor(appState.choroplethColorScheme);
     return d3.scaleQuantile<string>()
-      .domain(values)
+      .domain(data)
       .range(
         [
           colorScheme(0),
@@ -125,8 +119,7 @@ function RenderMap() {
       );
   };
 
-  const quantizeInterpolation = () => {
-    const [min, max] = getDataRange(appState.dataKeys.values!);
+  const quantizeInterpolation = ([min, max]: number[]) => {
     const colorScheme = choroplethColor(appState.choroplethColorScheme);
     return d3.scaleQuantize<string>()
       .domain([min, max])
@@ -141,26 +134,27 @@ function RenderMap() {
       );
   };
 
+  const choroplethData = getDataValues(appState.dataKeys.values!);
+  const [min, max] = getDataRange(choroplethData);
+
   const baseLayerFill = (d: any) => {
     const regionValue: { [key: string]: number; } = {};
     appState.userData.data.forEach((row) => {
       regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
     });
 
-    const color = linearInterpolation();
-
     if (regionValue[d.properties.admin]) {
       switch (appState.interpolationType) {
         case 'Linear':
-          return linearInterpolation()(regionValue[d.properties.admin]);
+          return linearInterpolation(max)(regionValue[d.properties.admin]);
         case 'Threshold':
-          return thresholdInterpolation()(regionValue[d.properties.admin]);
+          return thresholdInterpolation(choroplethData)(regionValue[d.properties.admin]);
         case 'Quantile':
-          return quantileInterpolation()(regionValue[d.properties.admin]);
+          return quantileInterpolation(choroplethData)(regionValue[d.properties.admin]);
         case 'Quantize':
-          return quantizeInterpolation()(regionValue[d.properties.admin]);
+          return quantizeInterpolation([min, max])(regionValue[d.properties.admin]);
         default:
-          return linearInterpolation()(regionValue[d.properties.admin]);
+          return linearInterpolation(max)(regionValue[d.properties.admin]);
       }
     }
     return '#c9d1da';
@@ -168,7 +162,6 @@ function RenderMap() {
 
   const symbolShapeAndSize = (d: any) => {
     if (appState.dataKeys.sizeValues) {
-      const [min, max] = getDataRange(appState.dataKeys.sizeValues!);
       const size = d3.scaleSequential()
         .domain([min, max])
         .range([200, 2000]);
