@@ -42,12 +42,6 @@ function RenderMap() {
     return appState.userData.data.map((row) => row[key]).filter(uniqueFilter);
   };
 
-  const symbolColor = (d: any) => {
-    const colorData = getSymbolColorData(appState.dataKeys.colorValues!);
-    const colorPalette = SYMBOL_PALETTE[appState.symbolColorScheme];
-    return colorPalette[colorData.indexOf(d[appState.dataKeys.colorValues!])];
-  };
-
   const symbolShape = (shapeString: string) => {
     switch (shapeString) {
       case 'Circle':
@@ -135,8 +129,13 @@ function RenderMap() {
   };
 
   const choroplethData = getDataValues(appState.dataKeys.values!);
-  const [min, max] = getDataRange(choroplethData);
   const sortedChoroplethData = numericSort(choroplethData);
+  const [min, max] = getDataRange(choroplethData);
+
+  const symbolData = getDataValues(appState.dataKeys.sizeValues!);
+  const [smin, smax] = getDataRange(symbolData);
+  const colorData = getSymbolColorData(appState.dataKeys.colorValues!);
+  const colorPalette = SYMBOL_PALETTE[appState.symbolColorScheme];
 
   const baseLayerFill = (d: any) => {
     const regionValue: { [key: string]: number; } = {};
@@ -163,9 +162,9 @@ function RenderMap() {
 
   const symbolShapeAndSize = (d: any) => {
     if (appState.dataKeys.sizeValues) {
-      const size = d3.scaleSequential()
-        .domain([min, max])
-        .range([200, 2000]);
+      const size = d3.scaleSqrt()
+        .domain([smin, smax])
+        .range([0, 2000]);
       return d3.symbol()
         .type(symbolShape(appState.symbolShape))
         .size(size(d[appState.dataKeys.sizeValues!]))();
@@ -189,6 +188,10 @@ function RenderMap() {
   };
 
   useEffect(() => {
+    // const prefix = 'benchmark';
+    // const startString = `${prefix}-start`;
+    // const endString = `${prefix}-end`;
+    // performance.mark(startString);
     const svg = d3
       .select('#RenderMap')
       .attr('width', 720)
@@ -226,9 +229,12 @@ function RenderMap() {
           .data(appState.userData.data)
           .join('path')
           // eslint-disable-next-line dot-notation
-          .attr('transform', (d) => `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`)
+          .attr('transform', (d) => {
+            if (!d[appState.dataKeys.longitude!] || !d[appState.dataKeys.latitude!])console.log(d);
+            return `translate(${projection([d[appState.dataKeys.longitude!], d[appState.dataKeys.latitude!]])})`;
+          })
           .attr('d', symbolShapeAndSize)
-          .attr('fill', symbolColor)
+          .attr('fill', (d) => colorPalette[colorData.indexOf(d[appState.dataKeys.colorValues!])])
           .attr('opacity', 0.7);
       }
 
@@ -324,7 +330,6 @@ function RenderMap() {
         const padding = 17;
         const legendWidth = 14;
         const legendHeight = 14;
-        const colorData = getSymbolColorData(appState.dataKeys.colorValues);
 
         const swatches = svg.selectAll('g.swatches')
           .data(colorData);
@@ -356,6 +361,8 @@ function RenderMap() {
     };
 
     getD3Data();
+    // performance.mark(endString);
+    // console.log(performance.measure(prefix, startString, endString));
   });
   return (
     <svg id="RenderMap" width="720" height="720" />
