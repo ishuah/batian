@@ -36,7 +36,7 @@
     "lint": "npx eslint src/*",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build --cname app.batian.io"
   },
   "browserslist": {
     "production": [
