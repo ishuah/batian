@@ -5,3 +5,7 @@
 
 
  **Batian** is an open web tool to create vector-based visualizations from geospatial data.
+
+ ![Africa Population](./public/img/africa-demo.svg)
+
+ **Currently in active development.**
