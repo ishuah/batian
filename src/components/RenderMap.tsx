@@ -188,10 +188,6 @@ function RenderMap() {
   };
 
   useEffect(() => {
-    // const prefix = 'benchmark';
-    // const startString = `${prefix}-start`;
-    // const endString = `${prefix}-end`;
-    // performance.mark(startString);
     const svg = d3
       .select('#RenderMap')
       .attr('width', 720)
@@ -361,8 +357,6 @@ function RenderMap() {
     };
 
     getD3Data();
-    // performance.mark(endString);
-    // console.log(performance.measure(prefix, startString, endString));
   });
   return (
     <svg id="RenderMap" width="720" height="720" />
