@@ -3,6 +3,12 @@ import { useRecoilValue } from 'recoil';
 import * as d3 from 'd3';
 import { recoilState } from '../store';
 import { REGIONS, SYMBOL_PALETTE } from '../constants';
+import {
+  linearInterpolation,
+  quantileInterpolation,
+  quantizeInterpolation,
+  thresholdInterpolation,
+} from '../utils/InterpolationUtils';
 
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
@@ -69,65 +75,6 @@ function RenderMap() {
 
   const numericSort = (arr: number[]): number[] => arr.slice().sort((a, b) => a - b);
 
-  const linearInterpolation = (max: number) => {
-    const colorScheme = choroplethColor(appState.choroplethColorScheme);
-    return d3.scaleLinear<string>()
-      .domain([0, max])
-      .range(
-        [
-          colorScheme(0),
-          colorScheme(1),
-        ],
-      );
-  };
-
-  const thresholdInterpolation = (data: number[]) => {
-    const halfPoint = Math.ceil(data.length / 2);
-    const lowerThreshold = d3.median(data.slice(0, halfPoint));
-    const upperThreshold = d3.median(data.slice(halfPoint, data.length));
-    const colorScheme = choroplethColor(appState.choroplethColorScheme);
-
-    return d3.scaleThreshold<number, string>()
-      .domain([lowerThreshold!, upperThreshold!])
-      .range(
-        [
-          colorScheme(0),
-          colorScheme(0.5),
-          colorScheme(1),
-        ],
-      );
-  };
-
-  const quantileInterpolation = (data: number[]) => {
-    const colorScheme = choroplethColor(appState.choroplethColorScheme);
-    return d3.scaleQuantile<string>()
-      .domain(data)
-      .range(
-        [
-          colorScheme(0),
-          colorScheme(0.25),
-          colorScheme(0.5),
-          colorScheme(0.75),
-          colorScheme(1),
-        ],
-      );
-  };
-
-  const quantizeInterpolation = ([min, max]: number[]) => {
-    const colorScheme = choroplethColor(appState.choroplethColorScheme);
-    return d3.scaleQuantize<string>()
-      .domain([min, max])
-      .range(
-        [
-          colorScheme(0),
-          colorScheme(0.25),
-          colorScheme(0.5),
-          colorScheme(0.75),
-          colorScheme(1),
-        ],
-      );
-  };
-
   const choroplethData = getDataValues(appState.dataKeys.values!);
   const sortedChoroplethData = numericSort(choroplethData);
   const [min, max] = getDataRange(choroplethData);
@@ -142,19 +89,26 @@ function RenderMap() {
     appState.userData.data.forEach((row) => {
       regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
     });
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
 
     if (regionValue[d.properties.admin]) {
       switch (appState.interpolationType) {
         case 'Linear':
-          return linearInterpolation(max)(regionValue[d.properties.admin]);
+          return linearInterpolation(max, colorScheme)(regionValue[d.properties.admin]);
         case 'Threshold':
-          return thresholdInterpolation(sortedChoroplethData)(regionValue[d.properties.admin]);
+          return thresholdInterpolation(
+            sortedChoroplethData,
+            colorScheme,
+          )(regionValue[d.properties.admin]);
         case 'Quantile':
-          return quantileInterpolation(choroplethData)(regionValue[d.properties.admin]);
+          return quantileInterpolation(
+            choroplethData,
+            colorScheme,
+          )(regionValue[d.properties.admin]);
         case 'Quantize':
-          return quantizeInterpolation([min, max])(regionValue[d.properties.admin]);
+          return quantizeInterpolation([min, max], colorScheme)(regionValue[d.properties.admin]);
         default:
-          return linearInterpolation(max)(regionValue[d.properties.admin]);
+          return linearInterpolation(max, colorScheme)(regionValue[d.properties.admin]);
       }
     }
     return '#c9d1da';
@@ -242,10 +196,11 @@ function RenderMap() {
         const offsetY = 620;
         const ticks = width / 64;
         let x: d3.ScaleLinear<string, string, never> | d3.ScaleLinear<number, number, never>;
+        const colorScheme = choroplethColor(appState.choroplethColorScheme);
 
         // Continuous
         if (appState.interpolationType === 'Linear') {
-          const color = linearInterpolation(max);
+          const color = linearInterpolation(max, colorScheme);
           const n = Math.min(color.domain().length, color.range().length);
           x = color.copy().rangeRound(d3.quantize(d3.interpolate(offsetX, width + offsetX), n));
 
@@ -257,7 +212,7 @@ function RenderMap() {
             .attr('preserveAspectRatio', 'none')
             .attr('xlink:href', ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
         } else if (appState.interpolationType === 'Threshold') { // Threshold
-          const color = thresholdInterpolation(sortedChoroplethData);
+          const color = thresholdInterpolation(sortedChoroplethData, colorScheme);
           const thresholds = color.domain();
 
           x = d3.scaleLinear()
@@ -273,7 +228,7 @@ function RenderMap() {
             .attr('height', height)
             .attr('fill', (d) => d);
         } else if (appState.interpolationType === 'Quantile') { // Quantile
-          const color = quantileInterpolation(choroplethData);
+          const color = quantileInterpolation(choroplethData, colorScheme);
           const thresholds = color.quantiles();
 
           x = d3.scaleLinear()
@@ -289,7 +244,7 @@ function RenderMap() {
             .attr('height', height)
             .attr('fill', (d) => d);
         } else { // Quantize
-          const color = quantizeInterpolation(choroplethData);
+          const color = quantizeInterpolation(choroplethData, colorScheme);
           const thresholds = color.thresholds();
 
           x = d3.scaleLinear()
