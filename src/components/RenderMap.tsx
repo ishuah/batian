@@ -133,7 +133,7 @@ function RenderMap() {
 
     const url = REGIONS[appState.map.region];
 
-    const getD3Data = async () => {
+    const renderMap = async () => {
       const data = await d3.json(url) as any;
       const b = path.bounds(data);
       const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / 720, (b[1][1] - b[0][1]) / 600);
@@ -211,7 +211,7 @@ function RenderMap() {
       }
     };
 
-    getD3Data();
+    renderMap();
   });
   return (
     <svg id="RenderMap" width="720" height="720" />

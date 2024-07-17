@@ -33,6 +33,10 @@ class QuantileColorScale implements IColorScale {
 
   public legend(svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>): void {
     const color = this.interpolation();
+    const thresholds = color.quantiles();
+    const tickValues = d3.range(thresholds.length);
+    const thresholdFormat = d3.format('.2s');
+    const tickFormat = (i: number) => thresholdFormat(thresholds[i]);
     const x = d3.scaleLinear()
       .domain([-1, color.range().length - 1])
       .rangeRound([LEGEND_OFFSETX, LEGEND_WIDTH + LEGEND_OFFSETX]);
@@ -50,7 +54,9 @@ class QuantileColorScale implements IColorScale {
       .attr('transform', `translate(${0}, ${LEGEND_OFFSETY + LEGEND_HEIGHT})`)
       .call(d3.axisBottom(x as d3.ScaleLinear<number, number, never>)
         .ticks(LEGEND_TICKS)
-        .tickSize(6))
+        .tickFormat((d, i) => tickFormat(i))
+        .tickSize(6)
+        .tickValues(tickValues))
       .call((g) => g.append('text')
         .attr('x', LEGEND_OFFSETX)
         .attr('y', -30)

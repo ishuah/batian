@@ -28,9 +28,7 @@ class LinearColorScale implements IColorScale {
       );
   }
 
-  ramp(): HTMLCanvasElement {
-    const color = this.interpolation();
-    const n = Math.min(color.domain().length, color.range().length);
+  static ramp(color: d3.ScaleLinear<string, string, never>, n: number): HTMLCanvasElement {
     const legendColor = color.copy().domain(d3.quantize(d3.interpolate(0, 1), n));
     const canvas = document.createElement('canvas');
     canvas.width = n;
@@ -58,12 +56,13 @@ class LinearColorScale implements IColorScale {
       .attr('width', LEGEND_WIDTH)
       .attr('height', LEGEND_HEIGHT)
       .attr('preserveAspectRatio', 'none')
-      .attr('xlink:href', this.ramp().toDataURL());
+      .attr('xlink:href', LinearColorScale.ramp(color, n).toDataURL());
 
     svg.append('g')
       .attr('transform', `translate(${0}, ${LEGEND_OFFSETY + LEGEND_HEIGHT})`)
       .call(d3.axisBottom(x as unknown as d3.ScaleLinear<number, number, never>)
         .ticks(LEGEND_TICKS)
+        .tickFormat(d3.format('.2s'))
         .tickSize(6))
       .call((g) => g.append('text')
         .attr('x', LEGEND_OFFSETX)
