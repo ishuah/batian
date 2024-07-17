@@ -3,12 +3,10 @@ import { useRecoilValue } from 'recoil';
 import * as d3 from 'd3';
 import { recoilState } from '../store';
 import { REGIONS, SYMBOL_PALETTE } from '../constants';
-import {
-  linearInterpolation,
-  quantileInterpolation,
-  quantizeInterpolation,
-  thresholdInterpolation,
-} from '../utils/InterpolationUtils';
+import LinearColorScale from '../lib/LinearColorScale';
+import ThresholdColorScale from '../lib/ThresholdColorScale';
+import QuantizeColorScale from '../lib/QuantizeColorScale';
+import QuantileColorScale from '../lib/QuantileColorScale';
 
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
@@ -73,10 +71,7 @@ function RenderMap() {
 
   const getDataRange = (data: number[]): number[] => [Math.min(...data), Math.max(...data)];
 
-  const numericSort = (arr: number[]): number[] => arr.slice().sort((a, b) => a - b);
-
   const choroplethData = getDataValues(appState.dataKeys.values!);
-  const sortedChoroplethData = numericSort(choroplethData);
   const [min, max] = getDataRange(choroplethData);
 
   const symbolData = getDataValues(appState.dataKeys.sizeValues!);
@@ -84,32 +79,31 @@ function RenderMap() {
   const colorData = getSymbolColorData(appState.dataKeys.colorValues!);
   const colorPalette = SYMBOL_PALETTE[appState.symbolColorScheme];
 
+  const getColorScale = (): IColorScale => {
+    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+    switch (appState.interpolationType) {
+      case 'Linear':
+        return new LinearColorScale(max, colorScheme);
+      case 'Threshold':
+        return new ThresholdColorScale(choroplethData, colorScheme);
+      case 'Quantile':
+        return new QuantileColorScale(choroplethData, colorScheme);
+      case 'Quantize':
+        return new QuantizeColorScale(min, max, colorScheme);
+      default:
+        return new LinearColorScale(max, colorScheme);
+    }
+  };
+
   const baseLayerFill = (d: any) => {
     const regionValue: { [key: string]: number; } = {};
     appState.userData.data.forEach((row) => {
       regionValue[row[appState.dataKeys.name!]] = Number(row[appState.dataKeys.values!]);
     });
-    const colorScheme = choroplethColor(appState.choroplethColorScheme);
+    const colorScale = getColorScale();
 
     if (regionValue[d.properties.admin]) {
-      switch (appState.interpolationType) {
-        case 'Linear':
-          return linearInterpolation(max, colorScheme)(regionValue[d.properties.admin]);
-        case 'Threshold':
-          return thresholdInterpolation(
-            sortedChoroplethData,
-            colorScheme,
-          )(regionValue[d.properties.admin]);
-        case 'Quantile':
-          return quantileInterpolation(
-            choroplethData,
-            colorScheme,
-          )(regionValue[d.properties.admin]);
-        case 'Quantize':
-          return quantizeInterpolation([min, max], colorScheme)(regionValue[d.properties.admin]);
-        default:
-          return linearInterpolation(max, colorScheme)(regionValue[d.properties.admin]);
-      }
+      return colorScale.interpolation()(regionValue[d.properties.admin]);
     }
     return '#c9d1da';
   };
@@ -129,19 +123,8 @@ function RenderMap() {
       .size(200)();
   };
 
-  const ramp = (color: d3.ScaleLinear<string, string, never>, n = 256) => {
-    const canvas = document.createElement('canvas');
-    canvas.width = n;
-    canvas.height = 1;
-    const context = canvas.getContext('2d')!;
-    for (let i = 0; i < n; i += 1) {
-      context.fillStyle = color(i / (n - 1));
-      context.fillRect(i, 0, 1, 1);
-    }
-    return canvas;
-  };
-
   useEffect(() => {
+    const colorScale = getColorScale();
     const svg = d3
       .select('#RenderMap')
       .attr('width', 720)
@@ -190,90 +173,7 @@ function RenderMap() {
 
       // Render legend (for choropleth maps)
       if (appState.dataKeys.values) {
-        const width = 320;
-        const height = 20;
-        const offsetX = 50;
-        const offsetY = 620;
-        const ticks = width / 64;
-        let x: d3.ScaleLinear<string, string, never> | d3.ScaleLinear<number, number, never>;
-        const colorScheme = choroplethColor(appState.choroplethColorScheme);
-
-        // Continuous
-        if (appState.interpolationType === 'Linear') {
-          const color = linearInterpolation(max, colorScheme);
-          const n = Math.min(color.domain().length, color.range().length);
-          x = color.copy().rangeRound(d3.quantize(d3.interpolate(offsetX, width + offsetX), n));
-
-          svg.append('image')
-            .attr('x', offsetX)
-            .attr('y', offsetY)
-            .attr('width', width)
-            .attr('height', height)
-            .attr('preserveAspectRatio', 'none')
-            .attr('xlink:href', ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
-        } else if (appState.interpolationType === 'Threshold') { // Threshold
-          const color = thresholdInterpolation(sortedChoroplethData, colorScheme);
-          const thresholds = color.domain();
-
-          x = d3.scaleLinear()
-            .domain([-1, color.range().length - 1])
-            .rangeRound([offsetX, width + offsetX]);
-
-          svg.selectAll('g.legend')
-            .data(color.range())
-            .join('rect')
-            .attr('x', (d, i) => x(i - 1))
-            .attr('y', offsetY)
-            .attr('width', (d, i) => Number(x(i)) - Number(x(i - 1)))
-            .attr('height', height)
-            .attr('fill', (d) => d);
-        } else if (appState.interpolationType === 'Quantile') { // Quantile
-          const color = quantileInterpolation(choroplethData, colorScheme);
-          const thresholds = color.quantiles();
-
-          x = d3.scaleLinear()
-            .domain([-1, color.range().length - 1])
-            .rangeRound([offsetX, width + offsetX]);
-
-          svg.selectAll('g.legend')
-            .data(color.range())
-            .join('rect')
-            .attr('x', (d, i) => x(i - 1))
-            .attr('y', offsetY)
-            .attr('width', (d, i) => Number(x(i)) - Number(x(i - 1)))
-            .attr('height', height)
-            .attr('fill', (d) => d);
-        } else { // Quantize
-          const color = quantizeInterpolation(choroplethData, colorScheme);
-          const thresholds = color.thresholds();
-
-          x = d3.scaleLinear()
-            .domain([-1, color.range().length - 1])
-            .rangeRound([offsetX, width + offsetX]);
-
-          svg.selectAll('g.legend')
-            .data(color.range())
-            .join('rect')
-            .attr('x', (d, i) => x(i - 1))
-            .attr('y', offsetY)
-            .attr('width', (d, i) => Number(x(i)) - Number(x(i - 1)))
-            .attr('height', height)
-            .attr('fill', (d) => d);
-        }
-
-        svg.append('g')
-          .attr('transform', `translate(${0}, ${offsetY + height})`)
-          .call(d3.axisBottom(x as d3.ScaleLinear<number, number, never>)
-            .ticks(ticks)
-            .tickSize(6))
-          .call((g) => g.append('text')
-            .attr('x', offsetX)
-            .attr('y', -30)
-            .attr('fill', 'currentColor')
-            .attr('text-anchor', 'start')
-            .attr('font-weight', 'bold')
-            .attr('class', 'title')
-            .text('Legend'));
+        colorScale.legend(svg);
       }
       // Render swatches (for symbol maps)
       if (appState.dataKeys.colorValues) {

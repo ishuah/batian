@@ -39,3 +39,11 @@ interface AppState {
 interface Palette {
   [key: string]: string[]
 }
+
+interface IColorScale {
+  interpolation(): d3.ScaleLinear<string, string, never>
+    | d3.ScaleThreshold<number, string, never>
+    | d3.ScaleQuantize<string, never>
+    | d3.ScaleQuantile<string, never>
+  legend(svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>): void
+}
