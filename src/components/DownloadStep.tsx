@@ -9,7 +9,7 @@ function DownloadStep() {
   const appState = useRecoilValue<AppState>(recoilState);
 
   function createStyleElementFromCSS() {
-    const sheet = document.styleSheets[0];
+    const sheet = document.styleSheets[1];
 
     const styleRules = [];
     for (let i = 0; i < sheet.cssRules.length; i += 1) {

@@ -6,12 +6,13 @@ type StepLabelProps = {
   text: string
   step: number
   completed: boolean
+  size: string
   active?: boolean
 }
 
 function StepLabel(props: Readonly<StepLabelProps>) {
   const {
-    text, step, completed, active,
+    text, step, completed, active, size,
   } = props;
   const color = active || completed ? '#236A87' : '#9e9e9e';
   return (
@@ -35,7 +36,9 @@ function StepLabel(props: Readonly<StepLabelProps>) {
             { completed ? (<Checkmark color="white" size="6px" />) : (<text fill="white" style={{ fontSize: '0.75rem' }} x="12" y="16" textAnchor="middle">{step}</text>) }
           </svg>
         </span>
-        <Text size="small" weight={500} margin={{ top: 'small' }}>{text}</Text>
+        {size === 'large' && (
+          <Text size="small" weight={500} margin={{ top: 'small' }}>{text}</Text>
+        )}
       </span>
     </Box>
   );

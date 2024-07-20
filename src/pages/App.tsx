@@ -1,9 +1,13 @@
 /* eslint-disable react/jsx-no-bind */
 /* eslint-disable react/no-array-index-key */
-import React, { useCallback } from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useCallback, useState } from 'react';
 import {
   Box, Button,
   Grid, Grommet, Header, Heading, Main, Image,
+  ResponsiveContext,
+  Layer,
+  Paragraph,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
 
@@ -29,6 +33,7 @@ const CustomTheme = {
 
 function App() {
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
+  const [smallScreenNotify, setSmallScreenNotify] = useState<boolean>(true);
 
   const advanceToNext = useCallback(() => {
     const currentStep = appState.currentStep + 1;
@@ -124,61 +129,83 @@ function App() {
 
   return (
     <Grommet theme={CustomTheme}>
-      <Main pad="medium">
-        <Header pad="none" align="center">
-          <Image
-            width={75}
-            height={75}
-            src={`${process.env.PUBLIC_URL}/img/batian-logo.png`}
-          />
-        </Header>
-        <Box pad="medium" align="center">
-          <Grid
-            rows={['large']}
-            columns={['large', 'large']}
-            gap="small"
-            areas={[
-              { name: 'nav', start: [0, 0], end: [0, 0] },
-              { name: 'main', start: [1, 0], end: [1, 0] },
-            ]}
-          >
-            <Box gridArea="nav">
-              <Box direction="row" pad="medium">
-                {
-                  STEPS
-                    .map((step, i) => (
-                      <StepLabel
-                        key={step}
-                        active={i === appState.currentStep}
-                        completed={i < appState.currentStep}
-                        text={step}
-                        step={i + 1}
-                      />
-                    ))
-                }
-              </Box>
-              <Box pad="medium">
-                { appState.currentStep === 0 && (<MapDetailStep />) }
-                { appState.currentStep === 1 && (<DataInputStep />) }
-                { appState.currentStep === 2 && (<MapRefineStep />) }
-                { appState.currentStep === 3 && (<VisualizeStep />) }
-                { appState.currentStep === 4 && (<DownloadStep />)}
+      <ResponsiveContext.Consumer>
+        {(size: string) => (
+          <Main pad="medium" overflow="scroll">
+            <Header pad="none" align="center">
+              <Image
+                width={50}
+                height={50}
+                src={`${process.env.PUBLIC_URL}/img/batian-logo.png`}
+              />
+            </Header>
+            <Box pad="medium" align="center">
+              {(size !== 'large' && smallScreenNotify) && (
+                <Layer
+                  onClickOutside={() => setSmallScreenNotify(false)}
+                >
+                  <Box direction="column" pad="small">
+                    <Box direction="row" justify="between">
+                      <Heading level="4" alignSelf="start" margin="none">Better on a computer</Heading>
+                      <Button onClick={() => setSmallScreenNotify(false)} alignSelf="end">X</Button>
+                    </Box>
+                    <Paragraph>
+                      You can keep working on your phone/tablet,
+                      but Batian works much better on a computer 💻
+                    </Paragraph>
+                    <Button onClick={() => setSmallScreenNotify(false)} label="Got it!" primary />
+                  </Box>
+                </Layer>
+              )}
+              <Grid
+                rows={['large']}
+                columns={[size, size]}
+                gap="small"
+                areas={[
+                  { name: 'nav', start: [0, 0], end: [0, 0] },
+                  { name: 'main', start: [1, 0], end: [1, 0] },
+                ]}
+              >
+                <Box gridArea="nav">
+                  <Box direction="row" pad="medium">
+                    {
+                      STEPS
+                        .map((step, i) => (
+                          <StepLabel
+                            key={step}
+                            active={i === appState.currentStep}
+                            completed={i < appState.currentStep}
+                            text={step}
+                            step={i + 1}
+                            size={size}
+                          />
+                        ))
+                    }
+                  </Box>
+                  <Box pad="medium">
+                    { appState.currentStep === 0 && (<MapDetailStep />) }
+                    { appState.currentStep === 1 && (<DataInputStep />) }
+                    { appState.currentStep === 2 && (<MapRefineStep />) }
+                    { appState.currentStep === 3 && (<VisualizeStep />) }
+                    { appState.currentStep === 4 && (<DownloadStep />)}
 
-                <Box direction="row" justify="between">
-                  <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
-                  <Box direction="row">
-                    <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
-                    <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
+                    <Box direction="row" justify="between">
+                      <Button onClick={revertToLast} alignSelf="start" label="Back" disabled={appState.currentStep === 0} />
+                      <Box direction="row" alignSelf="start">
+                        <Button onClick={reset} alignSelf="end" label="Cancel" margin={{ right: 'small' }} />
+                        <Button onClick={advanceToNext} alignSelf="end" primary label="Continue" disabled={toggleContinue()} />
+                      </Box>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
+                <Box gridArea="main" overflow="auto">
+                  {focusArea()}
+                </Box>
+              </Grid>
             </Box>
-            <Box gridArea="main" height="large" overflow="auto">
-              {focusArea()}
-            </Box>
-          </Grid>
-        </Box>
-      </Main>
+          </Main>
+        )}
+      </ResponsiveContext.Consumer>
     </Grommet>
   );
 }

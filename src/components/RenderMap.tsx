@@ -10,6 +10,7 @@ import QuantileColorScale from '../lib/QuantileColorScale';
 
 function RenderMap() {
   const appState = useRecoilValue<AppState>(recoilState);
+  const mapSize = 720;
 
   const projection = d3
     .geoMercator()
@@ -110,12 +111,12 @@ function RenderMap() {
 
   const symbolShapeAndSize = (d: any) => {
     if (appState.dataKeys.sizeValues) {
-      const size = d3.scaleSqrt()
+      const symbolSize = d3.scaleSqrt()
         .domain([smin, smax])
         .range([0, 2000]);
       return d3.symbol()
         .type(symbolShape(appState.symbolShape))
-        .size(size(d[appState.dataKeys.sizeValues!]))();
+        .size(symbolSize(d[appState.dataKeys.sizeValues!]))();
     }
 
     return d3.symbol()
@@ -127,8 +128,8 @@ function RenderMap() {
     const colorScale = getColorScale();
     const svg = d3
       .select('#RenderMap')
-      .attr('width', 720)
-      .attr('height', 720);
+      .attr('width', mapSize)
+      .attr('height', mapSize);
     svg.selectAll('*').remove();
 
     const url = REGIONS[appState.map.region];
@@ -136,8 +137,8 @@ function RenderMap() {
     const renderMap = async () => {
       const data = await d3.json(url) as any;
       const b = path.bounds(data);
-      const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / 720, (b[1][1] - b[0][1]) / 600);
-      const translate: [number, number] = [(720 - scale * (b[1][0] + b[0][0])) / 2,
+      const scale = 0.95 / Math.max((b[1][0] - b[0][0]) / mapSize, (b[1][1] - b[0][1]) / 600);
+      const translate: [number, number] = [(mapSize - scale * (b[1][0] + b[0][0])) / 2,
         (600 - scale * (b[1][1] + b[0][1])) / 2];
       projection
         .scale(scale)
@@ -214,7 +215,7 @@ function RenderMap() {
     renderMap();
   });
   return (
-    <svg id="RenderMap" width="720" height="720" />
+    <svg id="RenderMap" width={mapSize} height={mapSize} />
   );
 }
 
