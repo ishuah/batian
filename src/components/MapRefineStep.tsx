@@ -3,11 +3,13 @@ import {
   Select, Text, Notification, Table,
 } from 'grommet';
 import React, { useCallback, useEffect } from 'react';
+import ReactGA from 'react-ga4';
 import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
 
 function MapRefineStep() {
+  ReactGA.send({ hitType: "pageview", page: "MapRefineStep", title: "Map Refine Step" });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const columns = appState.userData.data.length > 0
     ? Object.keys(appState.userData.data[0]).map((header) => header) : [];

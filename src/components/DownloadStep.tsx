@@ -2,10 +2,12 @@ import {
   Box, Button, Heading, Paragraph,
 } from 'grommet';
 import React from 'react';
+import ReactGA from 'react-ga4';
 import { useRecoilValue } from 'recoil';
 import { recoilState } from '../store';
 
 function DownloadStep() {
+  ReactGA.send({ hitType: "pageview", page: "DownloadStep", title: "Download Step" });
   const appState = useRecoilValue<AppState>(recoilState);
 
   function createStyleElementFromCSS() {

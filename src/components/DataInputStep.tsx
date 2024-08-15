@@ -4,10 +4,12 @@ import {
 } from 'grommet';
 import Papa from 'papaparse';
 import React, { useCallback } from 'react';
+import ReactGA from 'react-ga4';
 import { useRecoilState } from 'recoil';
 import { recoilState } from '../store';
 
 function DataInputStep() {
+  ReactGA.send({ hitType: "pageview", page: "DataInputStep", title: "Data Input Step" });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const choroplethCopy = `Upload a CSV file containing a column that corresponds to the name of countries in ${appState.map.region}.`;
   const symbolCopy = ` Upload a CSV file containing the points you want to map.

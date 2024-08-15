@@ -2,11 +2,13 @@ import {
   Box, Heading, TextInput, RadioButtonGroup, Select,
 } from 'grommet';
 import React, { useCallback } from 'react';
+import ReactGA from 'react-ga4';
 import { useRecoilState } from 'recoil';
 import { REGIONS } from '../constants';
 import { recoilState } from '../store';
 
 function MapDetailStep() {
+  ReactGA.send({ hitType: "pageview", page: "MapDetailStep", title: "Map Detail Step" });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
   const setMapTitle = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

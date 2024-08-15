@@ -3,6 +3,7 @@ import {
   TableCell, Text, Select, Table,
 } from 'grommet';
 import React, { useCallback } from 'react';
+import ReactGA from 'react-ga4';
 import { useRecoilState } from 'recoil';
 import {
   CHOROPLETH_COLORS,
@@ -13,6 +14,7 @@ import {
 import { recoilState } from '../store';
 
 function VisualizeStep() {
+  ReactGA.send({ hitType: "pageview", page: "VisualizeStep", title: "Visualize Step" });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
   const setSymbolShape = useCallback((event: any) => {
