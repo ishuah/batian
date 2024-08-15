@@ -10,6 +10,7 @@ import {
   Paragraph,
 } from 'grommet';
 import { useRecoilState } from 'recoil';
+import ReactGA from 'react-ga4';
 
 import DataInputStep from '../components/DataInputStep';
 import MapDetailStep from '../components/MapDetailStep';
@@ -32,6 +33,7 @@ const CustomTheme = {
 };
 
 function App() {
+  ReactGA.initialize('G-JB6NTGXKG0');
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
   const [smallScreenNotify, setSmallScreenNotify] = useState<boolean>(true);
 
