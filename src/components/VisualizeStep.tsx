@@ -14,7 +14,7 @@ import {
 import { recoilState } from '../store';
 
 function VisualizeStep() {
-  ReactGA.send({ hitType: "pageview", page: "VisualizeStep", title: "Visualize Step" });
+  ReactGA.send({ hitType: 'pageview', page: 'VisualizeStep', title: 'Visualize Step' });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
   const setSymbolShape = useCallback((event: any) => {

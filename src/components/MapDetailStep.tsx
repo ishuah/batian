@@ -8,7 +8,7 @@ import { REGIONS } from '../constants';
 import { recoilState } from '../store';
 
 function MapDetailStep() {
-  ReactGA.send({ hitType: "pageview", page: "MapDetailStep", title: "Map Detail Step" });
+  ReactGA.send({ hitType: 'pageview', page: 'MapDetailStep', title: 'Map Detail Step' });
   const [appState, setAppState] = useRecoilState<AppState>(recoilState);
 
   const setMapTitle = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {

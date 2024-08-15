@@ -7,7 +7,7 @@ import { useRecoilValue } from 'recoil';
 import { recoilState } from '../store';
 
 function DownloadStep() {
-  ReactGA.send({ hitType: "pageview", page: "DownloadStep", title: "Download Step" });
+  ReactGA.send({ hitType: 'pageview', page: 'DownloadStep', title: 'Download Step' });
   const appState = useRecoilValue<AppState>(recoilState);
 
   function createStyleElementFromCSS() {
