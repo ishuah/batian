@@ -1,0 +1,5 @@
+{
+  "__note__": "Stub file. Replace with real TopoJSON/GeoJSON world countries data. See: https://github.com/topojson/world-atlas",
+  "type": "FeatureCollection",
+  "features": []
+}
