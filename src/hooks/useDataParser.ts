@@ -12,25 +12,31 @@ interface UseDataParserReturn {
   reset: () => void
 }
 
-function parseGeoJSON(text: string): ParsedData {
+function parseGeoJSONText(text: string): ParsedData {
   const geojson = JSON.parse(text) as GeoJSON.FeatureCollection
+  if (!geojson.features || !Array.isArray(geojson.features)) {
+    throw new Error('Invalid GeoJSON: missing features array')
+  }
   const rows: DataRow[] = geojson.features.map((feature) => ({
     ...(feature.properties ?? {}),
     _geometry_type: feature.geometry?.type ?? '',
   }))
   const columns = detectColumns(rows)
-  return { rows, columns, rawText: text }
+  return { rows, columns, rowCount: rows.length, sourceType: 'geojson', rawText: text }
 }
 
-function parseCSV(text: string): ParsedData {
+function parseCSVText(text: string): ParsedData {
   const result = Papa.parse<DataRow>(text, {
     header: true,
     skipEmptyLines: true,
     dynamicTyping: true,
   })
+  if (result.errors.length > 0 && result.data.length === 0) {
+    throw new Error(`CSV parse error: ${result.errors[0].message}`)
+  }
   const rows = result.data
   const columns = detectColumns(rows)
-  return { rows, columns, rawText: text }
+  return { rows, columns, rowCount: rows.length, sourceType: 'csv', rawText: text }
 }
 
 export function useDataParser(): UseDataParserReturn {
@@ -42,7 +48,7 @@ export function useDataParser(): UseDataParserReturn {
     setIsLoading(true)
     setError(null)
     try {
-      const data = isGeoJSON ? parseGeoJSON(text) : parseCSV(text)
+      const data = isGeoJSON ? parseGeoJSONText(text) : parseCSVText(text)
       setParsedData(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to parse data')
@@ -53,15 +59,24 @@ export function useDataParser(): UseDataParserReturn {
 
   const parseFile = useCallback(
     (file: File) => {
+      const ext = file.name.toLowerCase()
+      const isGeoJSON = ext.endsWith('.geojson') || ext.endsWith('.json')
+      const isCSV = ext.endsWith('.csv')
+      if (!isGeoJSON && !isCSV) {
+        setError('Unsupported file type. Please upload a .csv or .geojson file.')
+        return
+      }
       setIsLoading(true)
       setError(null)
-      const isGeoJSON = file.name.endsWith('.geojson') || file.name.endsWith('.json')
       const reader = new FileReader()
       reader.onload = (e) => {
         const text = e.target?.result as string
         parseText(text, isGeoJSON)
       }
-      reader.onerror = () => setError('Failed to read file')
+      reader.onerror = () => {
+        setError('Failed to read file')
+        setIsLoading(false)
+      }
       reader.readAsText(file)
     },
     [parseText],

@@ -16,18 +16,30 @@ function detectType(name: string, samples: string[]): ColumnType {
 
   if (LAT_NAMES.has(lower)) {
     const allNumeric = samples.every(isNumeric)
-    if (allNumeric) return 'latitude'
+    if (allNumeric) {
+      const allInRange = samples.every((v) => {
+        const n = Number(v)
+        return n >= -90 && n <= 90
+      })
+      if (allInRange) return 'latitude'
+    }
   }
   if (LNG_NAMES.has(lower)) {
     const allNumeric = samples.every(isNumeric)
-    if (allNumeric) return 'longitude'
+    if (allNumeric) {
+      const allInRange = samples.every((v) => {
+        const n = Number(v)
+        return n >= -180 && n <= 180
+      })
+      if (allInRange) return 'longitude'
+    }
   }
   if (REGION_NAMES.has(lower)) return 'region'
 
   const numericCount = samples.filter(isNumeric).length
   if (numericCount / samples.length >= 0.8) return 'numeric'
 
-  return 'string'
+  return 'text'
 }
 
 export function detectColumns(rows: Record<string, string | number>[]): ColumnDef[] {
@@ -43,7 +55,7 @@ export function detectColumns(rows: Record<string, string | number>[]): ColumnDe
     return {
       name: key,
       type: detectType(key, samples),
-      sample: samples.slice(0, 5),
+      sample: samples.slice(0, 3),
     }
   })
 }

@@ -1,6 +1,6 @@
 // ─── Raw data types ───────────────────────────────────────────────────────────
 
-export type ColumnType = 'latitude' | 'longitude' | 'region' | 'numeric' | 'string'
+export type ColumnType = 'latitude' | 'longitude' | 'region' | 'numeric' | 'text'
 
 export interface ColumnDef {
   name: string
@@ -13,6 +13,8 @@ export type DataRow = Record<string, string | number>
 export interface ParsedData {
   rows: DataRow[]
   columns: ColumnDef[]
+  rowCount: number
+  sourceType: 'csv' | 'geojson'
   rawText: string
 }
 
